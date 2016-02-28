@@ -9,6 +9,9 @@ import java.util.List;
  * @author Rik
  *
  * @param <T> used to make method chaining work for objects that inherit from it. Must be the same type as extending class.
+ * 
+ * @see jaws.business.http.HTTPRequest
+ * @see jaws.business.http.HTTPResponse
  */
 abstract class HTTPObject<T extends HTTPObject<T>> {
 
@@ -69,7 +72,12 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 	 * @return the first line of the HTTP object.
 	 */
 	abstract protected String getFirstLine();
-
+	
+	/**
+	 * Can be used to convert the HTTPObject to a syntactically correct String.
+	 * 
+	 * @return a string representation of the HTTP object.
+	 */
 	final public String toString() {
 
 		final String nl = System.lineSeparator();
@@ -81,6 +89,13 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 				+ body;
 	}
 	
+	/**
+	 * Parses everything but the first line of a HTTP object.
+	 * 
+	 * @param httpObject the HTTPObject to parse for.
+	 * @param lines the lines to parse, the first line is assumed to be the first header.
+	 * @return the HTTPObject passed to this function.
+	 */
 	static <T extends HTTPObject<T>> T parseHeadersAndBody(T httpObject, List<String> lines) {
 		
 		int i = 0;
@@ -90,6 +105,7 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 			httpObject.header(parts[0].trim(), parts[1].trim());
 		}
 		
+		httpObject.body("");
 		++i;
 		final String nl = System.lineSeparator();
 		for (;i < lines.size();++i) {

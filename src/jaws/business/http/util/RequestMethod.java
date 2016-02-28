@@ -1,7 +1,5 @@
 package jaws.business.http.util;
 
-import java.util.Optional;
-
 public enum RequestMethod {
 
 	GET("GET"),

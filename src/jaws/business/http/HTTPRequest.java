@@ -5,20 +5,30 @@ import java.util.List;
 
 import jaws.business.http.util.RequestMethod;
 
+/**
+ * A class to represent an HTTP request to the webserver.
+ * 
+ * @author Rik
+ * 
+ * @see jaws.business.http.HTTPResponse
+ */
 public class HTTPRequest extends HTTPObject<HTTPRequest> {
 
 	private RequestMethod requestMethod;
 	private String url;
 	private String httpVersion;
 	
-	/**
-	 * For more information see {@link jaws.business.http.HTTPObject#getFirstLine}.
-	 */
 	@Override
 	protected String getFirstLine() {
 		return requestMethod + " " + url + " " + httpVersion;
 	}
-
+	
+	/**
+	 * Parses a String into an HTTPRequest.
+	 * 
+	 * @param requestString the String to parse.
+	 * @return the parsed HTTPRequest.
+	 */
 	public static HTTPRequest parse(String requestString) {
 		
 		HTTPRequest request = new HTTPRequest();
