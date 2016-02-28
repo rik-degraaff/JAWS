@@ -2,6 +2,8 @@ package jaws.business.http;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * An abstract class to represent both HTTP requests and responses
@@ -15,7 +17,7 @@ import java.util.List;
  */
 abstract class HTTPObject<T extends HTTPObject<T>> {
 
-	private HashMap<String, String> headerFields;
+	private Map<String, String> headerFields = new HashMap<>();
 	private String body;
 
 	/**
@@ -105,12 +107,13 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 			httpObject.header(parts[0].trim(), parts[1].trim());
 		}
 		
-		httpObject.body("");
 		++i;
 		final String nl = System.lineSeparator();
-		for (;i < lines.size();++i) {
-			httpObject.body(httpObject.body() + lines.get(i) + nl);
-		}
+		httpObject.body(lines.subList(i, lines.size())
+		                     .stream()
+		                     .flatMap(s -> Stream.of(nl, s))
+		                     .skip(1)
+		                     .reduce("", String::concat));
 		
 		return httpObject;
 	}

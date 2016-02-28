@@ -42,8 +42,41 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 		request.url = firstLineItems[1];
 		request.httpVersion = firstLineItems[2];
 		
-		request = HTTPObject.parseHeadersAndBody(request, lines.subList(1, lines.size() - 1));
+		request = HTTPObject.parseHeadersAndBody(request, lines.subList(1, lines.size()));
 
 		return request;
+	}
+	
+	public RequestMethod method() {
+		
+		return requestMethod;
+	}
+	
+	public HTTPRequest method(RequestMethod method) {
+		
+		requestMethod = method;
+		return this;
+	}
+	
+	public String url() {
+		
+		return url;
+	}
+	
+	public HTTPRequest url(String url) {
+		
+		this.url = url;
+		return this;
+	}
+	
+	public String httpVersion() {
+		
+		return httpVersion;
+	}
+	
+	public HTTPRequest httpVersion(String httpVersion) {
+		
+		this.httpVersion = httpVersion;
+		return this;
 	}
 }
