@@ -109,7 +109,8 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 			httpObject.header(parts[0].trim(), parts[1].trim());
 		}
 		
-		int bodyLength = Integer.parseInt(httpObject.header("Content-Length"));
+		String blstr = httpObject.header("Content-Length");
+		int bodyLength = (blstr != null) ? Integer.parseInt(blstr) : 0;
 		
 		char[] chars = new char[bodyLength];
 		reader.read(chars, 0, bodyLength);

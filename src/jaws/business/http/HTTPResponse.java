@@ -11,11 +11,12 @@ public class HTTPResponse extends HTTPObject<HTTPResponse> {
 	
 	private int statusCode;
 	private String reason;
+	private String httpVersion;
 	
 	@Override
 	protected String getFirstLine() {
 		
-		return statusCode + " " + reason;
+		return httpVersion + " " + statusCode + " " + reason;
 	}
 	
 	/**
@@ -59,6 +60,28 @@ public class HTTPResponse extends HTTPObject<HTTPResponse> {
 	public HTTPResponse reason(String reason) {
 		
 		this.reason = reason;
+		return this;
+	}
+	
+	/**
+	 * Gets the HTTP version of the HTTP Response.
+	 * 
+	 * @return the HTTP version as a String.
+	 */
+	public String httpVersion() {
+		
+		return httpVersion;
+	}
+	
+	/**
+	 * Sets the HTTP version of the HTTP Response.
+	 * 
+	 * @param httpVersion the HTTP version as a String.
+	 * @return the HTTPResponse for method chaining.
+	 */
+	public HTTPResponse httpVersion(String httpVersion) {
+		
+		this.httpVersion = httpVersion;
 		return this;
 	}
 }

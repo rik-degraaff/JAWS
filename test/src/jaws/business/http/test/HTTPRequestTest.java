@@ -1,12 +1,15 @@
 package jaws.business.http.test;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.Before;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import jaws.business.http.HTTPRequest;
 import jaws.business.http.util.RequestMethod;
@@ -18,6 +21,7 @@ public class HTTPRequestTest {
 	private String url, httpVersion;
 	private List<String> keys, values;
 	private String body;
+	int bodyLength;
 	
 	@Before
 	public void setUp() {
@@ -32,6 +36,8 @@ public class HTTPRequestTest {
 		body = "This is the body" + nl
 		     + "of the request." + nl
 		     + "cool huh?";
+		
+		bodyLength = body.length();
 	}
 	
 	@Test
@@ -42,10 +48,17 @@ public class HTTPRequestTest {
                              + keys.get(1) + ": " + values.get(1) + nl
                              + keys.get(2) + ": " + values.get(2) + nl
                              + keys.get(3) + ": " + values.get(3) + nl
+                             + "Content-Length: " + bodyLength + nl
                              + nl
                              + body;
 		
-		HTTPRequest request = HTTPRequest.parse(requestString);
+		BufferedReader reader = new BufferedReader(new StringReader(requestString));
+		HTTPRequest request = null;
+		try {
+			request = HTTPRequest.parse(reader);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		assertEquals("Requestmethod was not parsed correctly.", method, request.method());
 		assertEquals("Url was not parsed correctly.", url, request.url());

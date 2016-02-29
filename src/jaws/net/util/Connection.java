@@ -1,6 +1,7 @@
 package jaws.net.util;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -35,8 +36,9 @@ public class Connection {
 	
 	public void write(String message) throws IOException {
 		
-		PrintWriter out = new PrintWriter(socket.getOutputStream());
-		out.append(message);
+		DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+		out.writeUTF(message);
 		out.flush();
+		out.close();
 	}
 }

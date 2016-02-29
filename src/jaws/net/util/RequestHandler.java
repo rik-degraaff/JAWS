@@ -12,11 +12,17 @@ public class RequestHandler {
 		try {
 			@SuppressWarnings("unused")
 			HTTPRequest httpRequest = HTTPRequest.parse(client.read());
-			client.write(new HTTPResponse().statusCode(200).reason("ok").body("<h1>Hello, World!</h1>").toString());
+			String body = "<h1>Hello, World!</h1>";
+			client.write(new HTTPResponse().httpVersion("HTTP/1.1").statusCode(200).reason("OK")
+			                               .header("Content-Type", "text/html")
+			                               .header("Content-Length", Integer.toString(body.length()))
+			                               .body(body).toString());
 		} catch (IOException e) {
 			
-			HTTPResponse response = new HTTPResponse().statusCode(500)
-			                                          .reason("Internal Server Error")
+			String body = "<h1>Hello, World!</h1>";
+			HTTPResponse response = new HTTPResponse().httpVersion("HTTP/1.1").statusCode(500).reason("Internal Server Error")
+			                                          .header("Content-Type", "text/html")
+			                                          .header("Content-Length", Integer.toString(body.length()))
 			                                          .body("<h1>500 - Internal Server Error</h1>");
 			
 			for(int i=0; i<3; i++) {

@@ -2,8 +2,6 @@ package jaws.business.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import jaws.business.http.util.RequestMethod;
 
