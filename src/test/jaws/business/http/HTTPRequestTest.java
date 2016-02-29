@@ -1,4 +1,4 @@
-package test.jaws.business.http;
+package jaws.business.http.test;
 
 import java.util.Arrays;
 import java.util.List;
