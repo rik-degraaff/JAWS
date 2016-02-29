@@ -47,33 +47,66 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 		return request;
 	}
 	
+	/**
+	 * Gets the method of the HTTP Request.
+	 * 
+	 * @return the method of the HTTP Request as an Enum.
+	 */
 	public RequestMethod method() {
 		
 		return requestMethod;
 	}
 	
+	/**
+	 * Sets the method of the HTTP Request.
+	 * 
+	 * @param method the method of the HTTP Request as an Enum.
+	 * @return the HTTPRequest for method chaining.
+	 */
 	public HTTPRequest method(RequestMethod method) {
 		
 		requestMethod = method;
 		return this;
 	}
 	
+	/**
+	 * Gets the url of the HTTP Request.
+	 * 
+	 * @return the url as a String.
+	 */
 	public String url() {
 		
 		return url;
 	}
 	
+	/**
+	 * Sets the url of the HTTP Request.
+	 * 
+	 * @param url the url as a String.
+	 * @return the HTTPRequest for method chaining.
+	 */
 	public HTTPRequest url(String url) {
 		
 		this.url = url;
 		return this;
 	}
 	
+	/**
+	 * Gets the HTTP version of the HTTP Request.
+	 * 
+	 * @return the HTTP version as a String.
+	 */
 	public String httpVersion() {
 		
 		return httpVersion;
 	}
 	
+	/**
+	 * Sets the HTTP version of the HTTP Request.
+	 * 
+	 * @param httpVersion the HTTP version as a String.
+	 * @return the HTTPRequest for method chaining.
+	 */
 	public HTTPRequest httpVersion(String httpVersion) {
 		
 		this.httpVersion = httpVersion;
