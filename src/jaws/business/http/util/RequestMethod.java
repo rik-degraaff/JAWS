@@ -1,5 +1,11 @@
 package jaws.business.http.util;
 
+/**
+ * A class to represent the request method of a {@link jaws.business.http.HTTPRequest}.
+ * 
+ * @author Rik
+ *
+ */
 public enum RequestMethod {
 
 	GET("GET"),
@@ -13,7 +19,10 @@ public enum RequestMethod {
 
 		this.name = name;
 	}
-
+	
+	/**
+	 * String representation of the method, suitable for the String representation of the HTTP request.
+	 */
 	public String toString() {
 
 		return this.name;
