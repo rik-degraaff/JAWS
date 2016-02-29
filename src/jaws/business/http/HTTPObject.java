@@ -1,7 +1,8 @@
 package jaws.business.http;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -95,28 +96,24 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 	 * Parses everything but the first line of a HTTP object.
 	 * 
 	 * @param httpObject the HTTPObject to parse for.
-	 * @param lines the lines to parse, the first line is assumed to be the first header.
+	 * @param reader the lines to parse, the first line is assumed to be the first header.
 	 * @return the HTTPObject passed to this function.
+	 * @throws IOException 
 	 */
-	static <T extends HTTPObject<T>> T parseHeadersAndBody(T httpObject, List<String> lines) {
+	static <T extends HTTPObject<T>> T parseHeadersAndBody(T httpObject, BufferedReader reader) throws IOException {
 		
-		int i = 0;
-		while (i < lines.size() && !lines.get(i).isEmpty()) {
+		String line;
+		while (!(line = reader.readLine()).isEmpty()) {
 			
-			String[] parts = lines.get(i++).split(":", 2);
+			String[] parts = line.split(":", 2);
 			httpObject.header(parts[0].trim(), parts[1].trim());
 		}
 		
-		if (i >= lines.size()) {
-			return httpObject.body("");
-		}
+		int bodyLength = Integer.parseInt(httpObject.header("Content-Length"));
 		
-		++i;
-		final String nl = System.lineSeparator();
-		return httpObject.body(lines.subList(i, lines.size())
-		                            .stream()
-		                            .flatMap(s -> Stream.of(nl, s))
-		                            .skip(1)
-		                            .reduce("", String::concat));
+		char[] chars = new char[bodyLength];
+		reader.read(chars, 0, bodyLength);
+		
+		return httpObject.body(new String(chars));
 	}
 }

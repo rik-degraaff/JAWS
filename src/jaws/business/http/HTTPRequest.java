@@ -1,5 +1,7 @@
 package jaws.business.http;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,23 +28,23 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 	/**
 	 * Parses a String into an HTTPRequest.
 	 * 
-	 * @param requestString the String to parse.
+	 * @param reader the String to parse.
 	 * @return the parsed HTTPRequest.
+	 * @throws IOException 
 	 */
-	public static HTTPRequest parse(String requestString) {
+	public static HTTPRequest parse(BufferedReader reader) throws IOException {
 		
 		HTTPRequest request = new HTTPRequest();
 
 		final String nl = System.lineSeparator();
 
-		List<String> lines = Arrays.asList(requestString.split(nl));
-		String[] firstLineItems = lines.get(0).split(" ");
+		String[] firstLineItems = reader.readLine().split(" ");
 
 		request.requestMethod = RequestMethod.valueOf(firstLineItems[0]);
 		request.url = firstLineItems[1];
 		request.httpVersion = firstLineItems[2];
 		
-		request = HTTPObject.parseHeadersAndBody(request, lines.subList(1, lines.size()));
+		request = HTTPObject.parseHeadersAndBody(request, reader);
 
 		return request;
 	}

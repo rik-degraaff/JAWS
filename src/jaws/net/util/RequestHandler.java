@@ -10,6 +10,7 @@ public class RequestHandler {
 	public void handle(Connection client) {
 		
 		try {
+			@SuppressWarnings("unused")
 			HTTPRequest httpRequest = HTTPRequest.parse(client.read());
 			client.write(new HTTPResponse().statusCode(200).reason("ok").body("<h1>Hello, World!</h1>").toString());
 		} catch (IOException e) {
