@@ -101,20 +101,22 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 	static <T extends HTTPObject<T>> T parseHeadersAndBody(T httpObject, List<String> lines) {
 		
 		int i = 0;
-		while (!lines.get(i).isEmpty()) {
+		while (i < lines.size() && !lines.get(i).isEmpty()) {
 			
 			String[] parts = lines.get(i++).split(":", 2);
 			httpObject.header(parts[0].trim(), parts[1].trim());
 		}
 		
+		if (i >= lines.size()) {
+			return httpObject.body("");
+		}
+		
 		++i;
 		final String nl = System.lineSeparator();
-		httpObject.body(lines.subList(i, lines.size())
-		                     .stream()
-		                     .flatMap(s -> Stream.of(nl, s))
-		                     .skip(1)
-		                     .reduce("", String::concat));
-		
-		return httpObject;
+		return httpObject.body(lines.subList(i, lines.size())
+		                            .stream()
+		                            .flatMap(s -> Stream.of(nl, s))
+		                            .skip(1)
+		                            .reduce("", String::concat));
 	}
 }
