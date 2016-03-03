@@ -1,7 +1,7 @@
 package jaws.net.util;
 
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -12,9 +12,9 @@ import jaws.business.http.HTTPResponse;
 
 public class RequestHandler {
 	
-	private List<Entry<String, Method>> handlers;
+	private List<Entry<String, Handler>> handlers;
 	
-	private Optional<Method> getHandler(String extension) {
+	private Optional<Handler> getHandler(String extension) {
 		
 		return handlers.stream()
 		               .filter(e -> extension.matches(e.getKey()))
@@ -26,14 +26,13 @@ public class RequestHandler {
 	public void handle(Connection client) {
 		
 		try {
-			@SuppressWarnings("unused")
 			HTTPRequest request = HTTPRequest.parse(client.read());
 			String body = "<h1>Hello, World!</h1>";
 			HTTPResponse response = new HTTPResponse().httpVersion("HTTP/1.1").statusCode(200).reason("OK")
 			                                          .header("Content-Type", "text/html");
-			Method handler = getHandler(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
+			Handler handler = getHandler(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
 			
-			handler.
+			handler.handle(request, response, new File(""));
 		} catch (IOException | NoSuchElementException e) {
 			
 			String body = "<h1>500 - Internal Server Error</h1>";
