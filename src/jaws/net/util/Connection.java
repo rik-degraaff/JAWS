@@ -34,10 +34,10 @@ public class Connection {
 		return input.substring(0, Math.max(0, input.length() - nl.length()));*/
 	}
 	
-	public void write(String message) throws IOException {
+	public void write(byte[] message) throws IOException {
 		
 		DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-		out.writeUTF(message);
+		out.write(message);
 		out.flush();
 		out.close();
 	}

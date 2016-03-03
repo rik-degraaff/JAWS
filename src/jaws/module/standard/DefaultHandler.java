@@ -4,13 +4,31 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jaws.business.http.HTTPRequest;
 import jaws.business.http.HTTPResponse;
 import jaws.module.base.Handle;
 
 public class DefaultHandler {
+	
+	private static final Map<String, String> mimeTypes = new HashMap<>();
+	
+	static {
+		mimeTypes.put("html", "text/html");
+		mimeTypes.put("htm", "text/html");
+		mimeTypes.put("xml", "text/xml");
+		mimeTypes.put("txt", "text/plain");
+		mimeTypes.put("css", "text/css");
+		mimeTypes.put("js", "text/javascript");
+		mimeTypes.put("png", "image/png");
+		mimeTypes.put("jpg", "image/jpeg");
+		mimeTypes.put("jpeg", "image/jpeg");
+		mimeTypes.put("bmp", "image/bmp");
+		mimeTypes.put("bm", "image/bmp");
+	}
 	
 	@Handle(extensions = {".*"}, priority = Integer.MIN_VALUE)
 	public static HTTPResponse handle(HTTPRequest request, HTTPResponse response, File webRoot) throws IOException {
@@ -28,16 +46,23 @@ public class DefaultHandler {
 				for(String fileName : fileNames) {
 					body += "<a href=\"" + request.url() + "/" + fileName + "\">" + fileName + "</a><br>";
 				}
-				return response.body(body);
+				
+				response.body(body);
 			}
-			List<String> contentLines = Files.readAllLines(file.toPath());
-			String content = "";
-			for(String line : contentLines) {
-				content += line + nl;
+			String content = new String(Files.readAllBytes(file.toPath()));
+			
+			String fileExtension = request.url().substring(request.url().lastIndexOf('.') + 1);
+			if(mimeTypes.containsKey(fileExtension)) {
+				response.header("Content-Type", mimeTypes.get(fileExtension));
 			}
-			return response.body(content.substring(0, Math.max(0, content.length() - nl.length())));
+			
+			response.body(content);
 		}  catch(NoSuchFileException e) {
-			return response.statusCode(404).reason("Not Found").body("<h1>404 - Not Found</h1>");
+			response.statusCode(404).reason("Not Found").body("<h1>404 - Not Found</h1>");
 		}
+		
+		System.out.println(response.body());
+		
+		return response.header("Content-Length", Integer.toString(response.body().length));
 	}
 }

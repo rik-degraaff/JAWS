@@ -40,8 +40,8 @@ public class RequestHandler {
 			                                          .header("Content-Type", "text/html");
 			Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
 			
-			response = handler.handle(request, response, new File("C:\\roy_geesing\\"));
-			client.write(response.toString());
+			response = handler.handle(request, response, new File("D:\\roy_geesing\\projects\\maven\\eclipse_workspace\\hello\\target\\site\\apidocs"));
+			client.write(response.getBytes());
 		} catch (IOException | NoSuchElementException e) {
 			
 			String body = "<h1>500 - Internal Server Error</h1>";
@@ -53,7 +53,7 @@ public class RequestHandler {
 			for(int i=0; i<3; i++) {
 				
 				try {
-					client.write(response.toString());
+					client.write(response.getBytes());
 					break;
 				} catch (IOException e1) {
 					continue;
