@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Function;
 
 import jaws.business.http.HTTPRequest;
 import jaws.business.http.HTTPResponse;
 
 public class RequestHandler {
 	
-	private List<Entry<String, Handler>> handlers;
+	/*private List<Entry<String, Handler>> handlers;
 	
 	private Optional<Handler> getHandler(String extension) {
 		
@@ -21,6 +22,13 @@ public class RequestHandler {
 		               .limit(1)
 		               .map(e -> e.getValue())
 		               .findFirst();
+	}*/
+	
+	private Function<String, Optional<Handler>> handlerGetter;
+	
+	public RequestHandler(Function<String, Optional<Handler>> handlerGetter) {
+		
+		this.handlerGetter = handlerGetter;
 	}
 
 	public void handle(Connection client) {
@@ -30,9 +38,10 @@ public class RequestHandler {
 			String body = "<h1>Hello, World!</h1>";
 			HTTPResponse response = new HTTPResponse().httpVersion("HTTP/1.1").statusCode(200).reason("OK")
 			                                          .header("Content-Type", "text/html");
-			Handler handler = getHandler(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
+			Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
 			
-			handler.handle(request, response, new File(""));
+			response = handler.handle(request, response, new File("C:\\roy_geesing\\"));
+			client.write(response.toString());
 		} catch (IOException | NoSuchElementException e) {
 			
 			String body = "<h1>500 - Internal Server Error</h1>";

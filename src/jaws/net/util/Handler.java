@@ -3,6 +3,7 @@ package jaws.net.util;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Optional;
 
 import jaws.business.http.HTTPRequest;
@@ -17,9 +18,9 @@ public class Handler {
 		this.method = method;
 	}
 	
-	public Optional<Handler> from(Method method) {
+	public static Optional<Handler> from(Method method) {
 		
-		if(method.getParameterTypes() == new Class<?>[] {HTTPRequest.class, HTTPResponse.class, File.class}
+		if(Arrays.equals(method.getParameterTypes(), new Class<?>[] {HTTPRequest.class, HTTPResponse.class, File.class})
 				&& method.getReturnType() == HTTPResponse.class) {
 			return Optional.of(new Handler(method));
 		}

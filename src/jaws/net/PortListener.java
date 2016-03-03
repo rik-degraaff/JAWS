@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import jaws.module.ModuleLoader;
 import jaws.net.util.Connection;
 import jaws.net.util.RequestHandler;
 
@@ -13,7 +14,7 @@ public class PortListener {
 
 	public PortListener(int port) {
 		
-		handler = new RequestHandler();
+		handler = new RequestHandler(ModuleLoader.getHandlerGetter());
 		ServerSocket server = null;
 		
 		try {
