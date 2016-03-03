@@ -20,8 +20,15 @@ public class DefaultHandler {
 		try {
 			File file = new File(webRoot, request.url().substring(1));
 			// if the requested path is a folder, try to get the 'index.html' file
-			if(file.isDirectory()) {
+			if(file.isDirectory() && new File(file, "index.html").exists()) {
 				file = new File(file, "index.html");
+			} else if(file.isDirectory()) {
+				String body = "";
+				String[] fileNames = file.list();
+				for(String fileName : fileNames) {
+					body += "<a href=\"" + request.url() + "/" + fileName + "\">" + fileName + "</a><br>";
+				}
+				return response.body(body);
 			}
 			List<String> contentLines = Files.readAllLines(file.toPath());
 			String content = "";
