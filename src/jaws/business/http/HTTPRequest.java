@@ -34,8 +34,6 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 		
 		HTTPRequest request = new HTTPRequest();
 
-		final String nl = System.lineSeparator();
-
 		String[] firstLineItems = reader.readLine().split(" ");
 
 		request.requestMethod = RequestMethod.valueOf(firstLineItems[0]);
