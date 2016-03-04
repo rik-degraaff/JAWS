@@ -61,7 +61,7 @@ public class DefaultHandler {
 			response.statusCode(404).reason("Not Found").body("<h1>404 - Not Found</h1>");
 		}
 		
-		System.out.println(response.body());
+		//System.out.println(response.body());
 		
 		return response.header("Content-Length", Integer.toString(response.body().length));
 	}

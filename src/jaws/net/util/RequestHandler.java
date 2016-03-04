@@ -13,17 +13,6 @@ import jaws.business.http.HTTPResponse;
 
 public class RequestHandler {
 	
-	/*private List<Entry<String, Handler>> handlers;
-	
-	private Optional<Handler> getHandler(String extension) {
-		
-		return handlers.stream()
-		               .filter(e -> extension.matches(e.getKey()))
-		               .limit(1)
-		               .map(e -> e.getValue())
-		               .findFirst();
-	}*/
-	
 	private Function<String, Optional<Handler>> handlerGetter;
 	
 	public RequestHandler(Function<String, Optional<Handler>> handlerGetter) {
@@ -35,12 +24,11 @@ public class RequestHandler {
 		
 		try {
 			HTTPRequest request = HTTPRequest.parse(client.read());
-			String body = "<h1>Hello, World!</h1>";
 			HTTPResponse response = new HTTPResponse().httpVersion("HTTP/1.1").statusCode(200).reason("OK")
 			                                          .header("Content-Type", "text/html");
 			Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
 			
-			response = handler.handle(request, response, new File("D:\\roy_geesing\\projects\\maven\\eclipse_workspace\\hello\\target\\site\\apidocs"));
+			response = handler.handle(request, response, new File("D:\\projects\\www"));
 			client.write(response.getBytes());
 		} catch (IOException | NoSuchElementException e) {
 			
