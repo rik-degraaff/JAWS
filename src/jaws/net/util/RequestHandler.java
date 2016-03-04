@@ -28,7 +28,7 @@ public class RequestHandler {
 			                                          .header("Content-Type", "text/html");
 			Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
 			
-			response = handler.handle(request, response, new File("D:\\projects\\www"));
+			response = handler.handle(request, response, new File("C:\\roy_geesing"));
 			client.write(response.getBytes());
 		} catch (IOException | NoSuchElementException e) {
 			

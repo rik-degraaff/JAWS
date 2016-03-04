@@ -48,15 +48,15 @@ public class DefaultHandler {
 				}
 				
 				response.body(body);
+			} else {
+				String content = new String(Files.readAllBytes(file.toPath()));			
+				String fileExtension = request.url().substring(request.url().lastIndexOf('.') + 1);
+				if(mimeTypes.containsKey(fileExtension)) {
+					response.header("Content-Type", mimeTypes.get(fileExtension));
+				}
+				
+				response.body(content);
 			}
-			String content = new String(Files.readAllBytes(file.toPath()));
-			
-			String fileExtension = request.url().substring(request.url().lastIndexOf('.') + 1);
-			if(mimeTypes.containsKey(fileExtension)) {
-				response.header("Content-Type", mimeTypes.get(fileExtension));
-			}
-			
-			response.body(content);
 		}  catch(NoSuchFileException e) {
 			response.statusCode(404).reason("Not Found").body("<h1>404 - Not Found</h1>");
 		}
