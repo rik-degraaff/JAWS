@@ -23,7 +23,6 @@ public class ModuleLoader {
 		
 		// add default handler
 		{
-			//Entry<Integer, Entry<String, Handler>> defaultHandler;
 			Class<?> clazz = DefaultHandler.class;
 			Method method = Arrays.asList(clazz.getDeclaredMethods())
 			                      .stream()

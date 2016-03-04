@@ -2,9 +2,10 @@ package jaws.business.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * An abstract class to represent both HTTP requests and responses
@@ -19,7 +20,7 @@ import java.util.function.Supplier;
 abstract class HTTPObject<T extends HTTPObject<T>> {
 
 	private Map<String, String> headerFields = new HashMap<>();
-	private String body;
+	private byte[] body;
 
 	/**
 	 * Sets the header for the key to the value.
@@ -49,22 +50,35 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 	/**
 	 * Sets the body of the HTTP object.
 	 *
-	 * @param body the body of the HTTP object as a string.
+	 * @param body the body of the HTTP object as a byte array.
 	 * @return the HTTP object for method chaining.
 	 */
 	@SuppressWarnings("unchecked")
-	final public T body(String body) {
+	final public T body(byte[] body) {
 
 		this.body = body;
 		return (T) this;
 	}
 
 	/**
+	 * Sets the body of the HTTP object.
+	 *
+	 * @param body the body of the HTTP object as a string.
+	 * @return the HTTP object for method chaining.
+	 */
+	@SuppressWarnings("unchecked")
+	final public T body(String body) {
+
+		this.body = body.getBytes();
+		return (T) this;
+	}
+
+	/**
 	 * Gets the body of the HTTP object.
 	 *
-	 * @return the body of the HTTP object as a string.
+	 * @return the body of the HTTP object as a byte array.
 	 */
-	final public String body() {
+	final public byte[] body() {
 
 		return body;
 	}
@@ -90,6 +104,20 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 				                         .reduce("", String::concat)
 				+ nl
 				+ body;
+	}
+	
+	final public byte[] getBytes() {
+
+		final String nl = System.lineSeparator();
+		String header = getFirstLine() + nl
+				+ headerFields.entrySet().stream()
+                                         .map(e -> e.getKey() + ": " + e.getValue() + nl)
+                                         .reduce("", String::concat)
+                + nl;
+		byte[] headerBytes = header.getBytes();
+		byte[] bytes = Arrays.copyOf(headerBytes, headerBytes.length + body().length);
+		System.arraycopy(body(), 0, bytes, headerBytes.length, body.length);
+		return bytes;
 	}
 	
 	/**
