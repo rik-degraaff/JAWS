@@ -2,8 +2,6 @@ package jaws.net.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;

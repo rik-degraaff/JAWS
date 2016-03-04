@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import jaws.business.http.HTTPRequest;
@@ -33,8 +32,6 @@ public class DefaultHandler {
 	@Handle(extensions = {".*"}, priority = Integer.MIN_VALUE)
 	public static HTTPResponse handle(HTTPRequest request, HTTPResponse response, File webRoot) throws IOException {
 		
-		final String nl = System.lineSeparator();
-
 		try {
 			File file = new File(webRoot, request.url().substring(1));
 			// if the requested path is a folder, try to get the 'index.html' file
