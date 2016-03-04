@@ -4,7 +4,11 @@
 	<classpathentry kind="src" path="test/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+<<<<<<< HEAD
+	<classpathentry combineaccessrules="false" kind="src" path="/Jaws_module_base"/>
+=======
 	<classpathentry combineaccessrules="false" kind="src" path="/JAWS_module_base"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TryCrash"/>
+>>>>>>> 84114703f1f642260688195179282eb626662da2
 	<classpathentry kind="output" path="bin"/>
 </classpath>
