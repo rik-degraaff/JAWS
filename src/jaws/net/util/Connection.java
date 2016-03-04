@@ -1,6 +1,7 @@
 package jaws.net.util;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -25,6 +26,14 @@ public class Connection {
 		
 		OutputStream out = socket.getOutputStream();
 		out.write(message);
+		out.flush();
+		out.close();
+	}
+	
+	public void write(ByteArrayOutputStream stream) throws IOException {
+		
+		OutputStream out = socket.getOutputStream();
+		stream.writeTo(out);
 		out.flush();
 		out.close();
 	}

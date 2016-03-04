@@ -27,7 +27,8 @@ public class RequestHandler {
 			Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
 			
 			response = handler.handle(request, response, new File("C:\\roy_geesing"));
-			client.write(response.getBytes());
+			//client.write(response.getBytes());
+			client.write(response.getOutputStream());
 		} catch (IOException | NoSuchElementException e) {
 			
 			String body = "<h1>500 - Internal Server Error</h1>";

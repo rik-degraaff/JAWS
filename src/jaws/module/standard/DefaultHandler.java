@@ -1,5 +1,6 @@
 package jaws.module.standard;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,6 +28,7 @@ public class DefaultHandler {
 		mimeTypes.put("jpeg", "image/jpeg");
 		mimeTypes.put("bmp", "image/bmp");
 		mimeTypes.put("bm", "image/bmp");
+		mimeTypes.put("mp4", "video/mp4");
 	}
 	
 	@Handle(extensions = {".*"}, priority = Integer.MIN_VALUE)
@@ -35,24 +37,26 @@ public class DefaultHandler {
 		try {
 			File file = new File(webRoot, request.url().substring(1));
 			// if the requested path is a folder, try to get the 'index.html' file
-			if(file.isDirectory() && new File(file, "index.html").exists()) {
-				file = new File(file, "index.html");
-			} else if(file.isDirectory()) {
+			if(file.isDirectory() && !new File(file, "index.html").exists()) {
 				String body = "";
 				String[] fileNames = file.list();
 				for(String fileName : fileNames) {
-					body += "<a href=\"" + request.url() + "/" + fileName + "\">" + fileName + "</a><br>";
+					body += "<a href=\"" + request.url() + "/" + fileName + "\">" + fileName + (new File(file, fileName).isDirectory()?"/":"") + "</a><br>";
 				}
 				
 				response.body(body);
 			} else {
-				String content = new String(Files.readAllBytes(file.toPath()));			
+				if(file.isDirectory() && new File(file, "index.html").exists()) {
+					file = new File(file, "index.html");
+				}
+				//String content = new String(Files.readAllBytes(file.toPath()));
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				response.body(out);
+				Files.copy(file.toPath(), out);
 				String fileExtension = request.url().substring(request.url().lastIndexOf('.') + 1);
 				if(mimeTypes.containsKey(fileExtension)) {
 					response.header("Content-Type", mimeTypes.get(fileExtension));
 				}
-				
-				response.body(content);
 			}
 		}  catch(NoSuchFileException e) {
 			response.statusCode(404).reason("Not Found").body("<h1>404 - Not Found</h1>");

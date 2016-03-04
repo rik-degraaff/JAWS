@@ -1,10 +1,14 @@
 package jaws.business.http;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static trycrash.Try.*;
 
 /**
  * An abstract class to represent both HTTP requests and responses
@@ -19,7 +23,7 @@ import java.util.Map;
 abstract class HTTPObject<T extends HTTPObject<T>> {
 
 	private Map<String, String> headerFields = new HashMap<>();
-	private byte[] body;
+	private ByteArrayOutputStream body = new ByteArrayOutputStream();
 
 	/**
 	 * Sets the header for the key to the value.
@@ -55,7 +59,8 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 	@SuppressWarnings("unchecked")
 	final public T body(byte[] body) {
 
-		this.body = body;
+		this.body = new ByteArrayOutputStream();
+		tryCrash(() -> this.body.write(body));
 		return (T) this;
 	}
 
@@ -68,7 +73,8 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 	@SuppressWarnings("unchecked")
 	final public T body(String body) {
 
-		this.body = body.getBytes();
+		this.body = new ByteArrayOutputStream();
+		tryCrash(() -> this.body.write(body.getBytes()));
 		return (T) this;
 	}
 
@@ -79,7 +85,14 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
 	 */
 	final public byte[] body() {
 
-		return body;
+		return body.toByteArray();
+	}
+	
+	@SuppressWarnings("unchecked")
+	final public T body(ByteArrayOutputStream stream) {
+		
+		this.body = stream;
+		return (T) this;
 	}
 
 	/**
@@ -115,8 +128,25 @@ abstract class HTTPObject<T extends HTTPObject<T>> {
                 + nl;
 		byte[] headerBytes = header.getBytes();
 		byte[] bytes = Arrays.copyOf(headerBytes, headerBytes.length + body().length);
-		System.arraycopy(body(), 0, bytes, headerBytes.length, body.length);
+		System.arraycopy(body(), 0, bytes, headerBytes.length, body.size());
 		return bytes;
+	}
+	
+	final public ByteArrayOutputStream getOutputStream() {
+		
+		final String nl = System.lineSeparator();
+		String header = getFirstLine() + nl
+				+ headerFields.entrySet().stream()
+                                         .map(e -> e.getKey() + ": " + e.getValue() + nl)
+                                         .reduce("", String::concat)
+                + nl;
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		tryCrash(() -> {
+			out.write(header.getBytes());
+			body.writeTo(out);
+		});
+		
+		return out;
 	}
 	
 	/**
