@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.function.Supplier;
 
 /**
  * An abstract class to represent both HTTP requests and responses
