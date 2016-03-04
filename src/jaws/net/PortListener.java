@@ -10,12 +10,9 @@ import jaws.net.util.RequestHandler;
 import jaws.thread.ThreadPool;
 
 public class PortListener {
-	
-	//RequestHandler handler;
 
 	public PortListener(int port) {
 		
-		//handler = new RequestHandler(ModuleLoader.getHandlerGetter());
 		ThreadPool requestHandlers = new ThreadPool(5);
 		ServerSocket server = null;
 		
