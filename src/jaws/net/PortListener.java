@@ -7,14 +7,16 @@ import java.net.Socket;
 import jaws.module.ModuleLoader;
 import jaws.net.util.Connection;
 import jaws.net.util.RequestHandler;
+import jaws.thread.ThreadPool;
 
 public class PortListener {
 	
-	RequestHandler handler;
+	//RequestHandler handler;
 
 	public PortListener(int port) {
 		
-		handler = new RequestHandler(ModuleLoader.getHandlerGetter());
+		//handler = new RequestHandler(ModuleLoader.getHandlerGetter());
+		ThreadPool requestHandlers = new ThreadPool(5);
 		ServerSocket server = null;
 		
 		try {
@@ -23,9 +25,13 @@ public class PortListener {
 				
 				Socket socket = server.accept();
 				Connection client = new Connection(socket);
-				handler.handle(client);
+				final RequestHandler handler = new RequestHandler(ModuleLoader.getHandlerGetter());
+				requestHandlers.execute(() -> handler.handle(client));
 			}
 		} catch (IOException e) {
+			
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			
 			e.printStackTrace();
 		} finally {
