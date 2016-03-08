@@ -4,7 +4,6 @@ import static trycrash.Try.tryCatch;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.AbstractMap.SimpleEntry;
@@ -25,7 +24,7 @@ import jaws.net.util.Handler;
 
 public class ModuleLoader {
 	
-	private static final String moduleFolderPath = "C:\\Users\\geroy\\projects\\jaws\\modules";
+	private static final String moduleFolderPath = "D:\\Users\\Roy\\projects\\jaws\\modules";
 	
 	private static List<Entry<String, Handler>> handlers;
 	
@@ -72,46 +71,55 @@ public class ModuleLoader {
 					}
 					System.out.println("Found class: " + jarEntry.getName());
 
-					URL[] urls;
-					try {
-						urls = new URL[] {(file.getParentFile().toURI().toURL())};
-					} catch (MalformedURLException e3) {
-						// TODO Auto-generated catch block
-						e3.printStackTrace();
-					}
-					URLClassLoader cl = new URLClassLoader(urls);
-					Class<?> clazz;
-					try {
-                        
-                        // Usually throws a NoClassDefFoundError
-                        clazz = cl.loadClass(file.getName().substring(0, file.getName().length() - ".class".length()));
-					}catch(NoClassDefFoundError e) {
-                        
-                        // Get Fully-Qualified-Classname from Error message
-                        String fqName = e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1, e.getMessage().length() - 1).replace("/", ".");
-                        clazz = Class.forName(fqName);
-					}
-					List<Method> methods = Arrays.asList(jarEntry.getClass().getDeclaredMethods())
-					                             .stream()
-					                             .filter(m -> m.isAnnotationPresent(Handle.class))
-					                             .collect(Collectors.toList());
-					for(Method method : methods) {
-						System.out.println("Found method: " + method.getName());
-						for(String extension : method.getAnnotation(Handle.class).extensions()) {
-							unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
-							                                     new SimpleEntry<>(extension,
-							                                                       Handler.from(method))));
+					tryCatch(() -> {
+						URL[] urls = new URL[] { new URL("jar:file:" + jar.getName() + "!/") };
+						URLClassLoader cl = new URLClassLoader(urls);
+						System.out.println("Loaded ClassLoader");
+						Class<?> clazz = null;
+						try {
+	                        
+	                        // Usually throws a NoClassDefFoundError
+	                        clazz = cl.loadClass(jarEntry.getName().substring(0, jarEntry.getName().length() - ".class".length()).replace("/", "."));
+						}catch(NoClassDefFoundError | ClassNotFoundException e) {
+	                        
+	                        // Get Fully-Qualified-Classname from Error message
+	                        String fqName = e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1, e.getMessage().length()).replace("/", ".");
+	                        System.out.println(e.getMessage());
+	                        try {
+	                        	clazz = Class.forName(fqName);
+	                        } catch(ClassNotFoundException e2) {
+	                        	e2.printStackTrace();
+	                        }
 						}
-					}
+						cl.close();
+						if(clazz == null) {
+							return;
+						}
+						System.out.println("Loaded class");
+						List<Method> methods = Arrays.asList(clazz.getDeclaredMethods())
+						                             .stream()
+						                             .filter(m -> m.isAnnotationPresent(Handle.class))
+						                             .collect(Collectors.toList());
+						for(Method method : methods) {
+							System.out.println("Found method: " + method.getName());
+							for(String extension : method.getAnnotation(Handle.class).extensions()) {
+								unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
+								                                     new SimpleEntry<>(extension,
+								                                                       Handler.from(method))));
+							}
+						}
+					});
 				}
 			}
 		}
 		
 		handlers = unsortedHandlers.stream()
 		                           .filter(e -> e.getValue().getValue().isPresent())
-		                           .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+		                           .sorted((e1, e2) -> e2.getKey().compareTo(e1.getKey()))
 		                           .map(e -> new SimpleEntry<>(e.getValue().getKey(), e.getValue().getValue().get()))
 		                           .collect(Collectors.toList());
+
+		System.out.println("Finished loading modules");
 	}
 	
 	private static Optional<Handler> getHandler(String extension) {
