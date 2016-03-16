@@ -29,6 +29,7 @@ public class DefaultHandler {
 		mimeTypes.put("bmp", "image/bmp");
 		mimeTypes.put("bm", "image/bmp");
 		mimeTypes.put("mp4", "video/mp4");
+		mimeTypes.put("avi", "video/avi");
 	}
 	
 	@Handle(extensions = {".*"}, priority = Integer.MIN_VALUE)
