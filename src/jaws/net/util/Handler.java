@@ -1,14 +1,15 @@
 package jaws.net.util;
 
+import static trycrash.Try.tryCrash;
+
 import java.io.File;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Optional;
 
 import jaws.business.http.HTTPRequest;
 import jaws.business.http.HTTPResponse;
-
-import static trycrash.Try.*;
 
 public class Handler {
 	
@@ -22,7 +23,8 @@ public class Handler {
 	public static Optional<Handler> from(Method method) {
 		
 		if(Arrays.equals(method.getParameterTypes(), new Class<?>[] {HTTPRequest.class, HTTPResponse.class, File.class})
-				&& method.getReturnType() == HTTPResponse.class) {
+				&& method.getReturnType() == HTTPResponse.class
+				&& Modifier.isStatic(method.getModifiers())) {
 			return Optional.of(new Handler(method));
 		}
 		return Optional.empty();
