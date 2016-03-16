@@ -1,4 +1,4 @@
-package jaws.net.util;
+package jaws.data.net;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -7,21 +7,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class Connection {
+class SocketConnection implements Connection {
 
 	private Socket socket;
 	
-	public Connection(Socket socket) {
+	public SocketConnection(Socket socket) {
 		
 		this.socket = socket;
 	}
 	
+	@Override
 	public BufferedReader read() throws IOException {
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		return in;
 	}
 	
+	@Override
 	public void write(byte[] message) throws IOException {
 		
 		OutputStream out = socket.getOutputStream();
@@ -30,6 +32,7 @@ public class Connection {
 		out.close();
 	}
 	
+	@Override
 	public void write(ByteArrayOutputStream stream) throws IOException {
 		
 		OutputStream out = socket.getOutputStream();

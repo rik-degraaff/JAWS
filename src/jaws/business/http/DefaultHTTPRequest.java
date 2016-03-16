@@ -3,16 +3,17 @@ package jaws.business.http;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import jaws.business.http.util.RequestMethod;
+import jaws.module.http.HTTPRequest;
+import jaws.module.http.RequestMethod;
 
 /**
  * A class to represent an HTTP request to the webserver.
  * 
  * @author Rik
  * 
- * @see jaws.business.http.HTTPResponse
+ * @see jaws.business.http.DefaultHTTPResponse
  */
-public class HTTPRequest extends HTTPObject<HTTPRequest> {
+public class DefaultHTTPRequest extends DefaultHTTPObject<HTTPRequest> implements HTTPRequest {
 
 	private RequestMethod requestMethod;
 	private String url;
@@ -32,15 +33,15 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 	 */
 	public static HTTPRequest parse(BufferedReader reader) throws IOException {
 		
-		HTTPRequest request = new HTTPRequest();
+		HTTPRequest request = new DefaultHTTPRequest();
 
 		String[] firstLineItems = reader.readLine().split(" ");
 
-		request.requestMethod = RequestMethod.valueOf(firstLineItems[0]);
-		request.url = firstLineItems[1];
-		request.httpVersion = firstLineItems[2];
+		request.method(RequestMethod.valueOf(firstLineItems[0]))
+		       .url(firstLineItems[1])
+		       .httpVersion(firstLineItems[2]);
 		
-		request = HTTPObject.parseHeadersAndBody(request, reader);
+		request = DefaultHTTPObject.parseHeadersAndBody(request, reader);
 
 		return request;
 	}
@@ -50,6 +51,7 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 	 * 
 	 * @return the method of the HTTP Request as an Enum.
 	 */
+	@Override
 	public RequestMethod method() {
 		
 		return requestMethod;
@@ -61,7 +63,8 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 	 * @param method the method of the HTTP Request as an Enum.
 	 * @return the HTTPRequest for method chaining.
 	 */
-	public HTTPRequest method(RequestMethod method) {
+	@Override
+	public DefaultHTTPRequest method(RequestMethod method) {
 		
 		requestMethod = method;
 		return this;
@@ -72,6 +75,7 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 	 * 
 	 * @return the url as a String.
 	 */
+	@Override
 	public String url() {
 		
 		return url;
@@ -83,7 +87,8 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 	 * @param url the url as a String.
 	 * @return the HTTPRequest for method chaining.
 	 */
-	public HTTPRequest url(String url) {
+	@Override
+	public DefaultHTTPRequest url(String url) {
 		
 		this.url = url;
 		return this;
@@ -94,6 +99,7 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 	 * 
 	 * @return the HTTP version as a String.
 	 */
+	@Override
 	public String httpVersion() {
 		
 		return httpVersion;
@@ -105,7 +111,8 @@ public class HTTPRequest extends HTTPObject<HTTPRequest> {
 	 * @param httpVersion the HTTP version as a String.
 	 * @return the HTTPRequest for method chaining.
 	 */
-	public HTTPRequest httpVersion(String httpVersion) {
+	@Override
+	public DefaultHTTPRequest httpVersion(String httpVersion) {
 		
 		this.httpVersion = httpVersion;
 		return this;

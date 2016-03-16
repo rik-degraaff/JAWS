@@ -1,4 +1,4 @@
-package jaws.module;
+package jaws.data.module;
 
 import static trycrash.Try.tryCatch;
 
@@ -18,9 +18,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import jaws.module.base.Handle;
-import jaws.module.standard.DefaultHandler;
-import jaws.net.util.Handler;
+import jaws.business.defaultmodule.DefaultHandler;
+import jaws.business.net.Handler;
+import jaws.module.net.Handle;
 
 public class ModuleLoader {
 	

@@ -1,4 +1,4 @@
-package jaws.thread;
+package jaws.business.thread;
 
 import static trycrash.Try.tryCatch;
 

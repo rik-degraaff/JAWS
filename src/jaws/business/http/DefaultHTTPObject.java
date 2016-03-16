@@ -1,14 +1,15 @@
 package jaws.business.http;
 
+import static trycrash.Try.tryCrash;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static trycrash.Try.*;
+import jaws.module.http.HTTPObject;
 
 /**
  * An abstract class to represent both HTTP requests and responses
@@ -17,10 +18,10 @@ import static trycrash.Try.*;
  *
  * @param <T> used to make method chaining work for objects that inherit from it. Must be the same type as extending class.
  * 
- * @see jaws.business.http.HTTPRequest
- * @see jaws.business.http.HTTPResponse
+ * @see jaws.business.http.DefaultHTTPRequest
+ * @see jaws.business.http.DefaultHTTPResponse
  */
-abstract class HTTPObject<T extends HTTPObject<T>> {
+abstract class DefaultHTTPObject<T extends HTTPObject<T>> {
 
 	private Map<String, String> headerFields = new HashMap<>();
 	private ByteArrayOutputStream body = new ByteArrayOutputStream();

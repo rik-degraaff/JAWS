@@ -1,4 +1,4 @@
-package jaws.thread;
+package jaws.business.thread;
 
 import java.util.ArrayList;
 import java.util.List;

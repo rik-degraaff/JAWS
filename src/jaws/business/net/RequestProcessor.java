@@ -1,4 +1,4 @@
-package jaws.net.util;
+package jaws.business.net;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,14 +6,15 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 
-import jaws.business.http.HTTPRequest;
-import jaws.business.http.HTTPResponse;
+import jaws.business.http.DefaultHTTPRequest;
+import jaws.business.http.DefaultHTTPResponse;
+import jaws.data.net.Connection;
 
-public class RequestHandler {
+public class RequestProcessor {
 	
 	private Function<String, Optional<Handler>> handlerGetter;
 	
-	public RequestHandler(Function<String, Optional<Handler>> handlerGetter) {
+	public RequestProcessor(Function<String, Optional<Handler>> handlerGetter) {
 		
 		this.handlerGetter = handlerGetter;
 	}
@@ -21,18 +22,18 @@ public class RequestHandler {
 	public void handle(Connection client) {
 		
 		try {
-			HTTPRequest request = HTTPRequest.parse(client.read());
-			HTTPResponse response = new HTTPResponse().httpVersion("HTTP/1.1").statusCode(200).reason("OK")
+			
+			DefaultHTTPRequest request = DefaultHTTPRequest.parse(client.read());
+			DefaultHTTPResponse response = new DefaultHTTPResponse().httpVersion("HTTP/1.1").statusCode(200).reason("OK")
 			                                          .header("Content-Type", "text/html");
 			Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
 			
 			response = handler.handle(request, response, new File("D:\\Projects\\www"));
-			//client.write(response.getBytes());
 			client.write(response.getOutputStream());
 		} catch (IOException | NoSuchElementException e) {
 			
 			String body = "<h1>500 - Internal Server Error</h1>";
-			HTTPResponse response = new HTTPResponse().httpVersion("HTTP/1.1").statusCode(500).reason("Internal Server Error")
+			DefaultHTTPResponse response = new DefaultHTTPResponse().httpVersion("HTTP/1.1").statusCode(500).reason("Internal Server Error")
 			                                          .header("Content-Type", "text/html")
 			                                          .header("Content-Length", Integer.toString(body.length()))
 			                                          .body(body);

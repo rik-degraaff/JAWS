@@ -1,4 +1,4 @@
-package jaws.net.util;
+package jaws.business.net;
 
 import static trycrash.Try.tryCrash;
 
@@ -8,8 +8,8 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Optional;
 
-import jaws.business.http.HTTPRequest;
-import jaws.business.http.HTTPResponse;
+import jaws.business.http.DefaultHTTPRequest;
+import jaws.business.http.DefaultHTTPResponse;
 
 public class Handler {
 	
@@ -22,17 +22,17 @@ public class Handler {
 	
 	public static Optional<Handler> from(Method method) {
 		
-		if(Arrays.equals(method.getParameterTypes(), new Class<?>[] {HTTPRequest.class, HTTPResponse.class, File.class})
-				&& method.getReturnType() == HTTPResponse.class
+		if(Arrays.equals(method.getParameterTypes(), new Class<?>[] {DefaultHTTPRequest.class, DefaultHTTPResponse.class, File.class})
+				&& method.getReturnType() == DefaultHTTPResponse.class
 				&& Modifier.isStatic(method.getModifiers())) {
 			return Optional.of(new Handler(method));
 		}
 		return Optional.empty();
 	}
 	
-	public HTTPResponse handle(HTTPRequest request, HTTPResponse response, File webroot) {
+	public DefaultHTTPResponse handle(DefaultHTTPRequest request, DefaultHTTPResponse response, File webroot) {
 		
-		return tryCrash(() -> (HTTPResponse) method.invoke(null, request, response, webroot));
+		return tryCrash(() -> (DefaultHTTPResponse) method.invoke(null, request, response, webroot));
 		
 		/*try {
 			return (HTTPResponse) method.invoke(null, request, response, webroot);

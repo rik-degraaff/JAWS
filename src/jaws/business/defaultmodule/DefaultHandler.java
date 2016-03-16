@@ -1,4 +1,4 @@
-package jaws.module.standard;
+package jaws.business.defaultmodule;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -8,32 +8,38 @@ import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.Map;
 
-import jaws.business.http.HTTPRequest;
-import jaws.business.http.HTTPResponse;
-import jaws.module.base.Handle;
+import jaws.business.http.DefaultHTTPRequest;
+import jaws.business.http.DefaultHTTPResponse;
+import jaws.module.net.Handle;
 
 public class DefaultHandler {
 	
 	private static final Map<String, String> mimeTypes = new HashMap<>();
 	
 	static {
+		
+		// plain text types
 		mimeTypes.put("html", "text/html");
 		mimeTypes.put("htm", "text/html");
 		mimeTypes.put("xml", "text/xml");
 		mimeTypes.put("txt", "text/plain");
 		mimeTypes.put("css", "text/css");
 		mimeTypes.put("js", "text/javascript");
+		
+		// image types
 		mimeTypes.put("png", "image/png");
 		mimeTypes.put("jpg", "image/jpeg");
 		mimeTypes.put("jpeg", "image/jpeg");
 		mimeTypes.put("bmp", "image/bmp");
 		mimeTypes.put("bm", "image/bmp");
+		
+		// video types
 		mimeTypes.put("mp4", "video/mp4");
 		mimeTypes.put("avi", "video/avi");
 	}
 	
 	@Handle(extensions = {".*"}, priority = Integer.MIN_VALUE)
-	public static HTTPResponse handle(HTTPRequest request, HTTPResponse response, File webRoot) throws IOException {
+	public static DefaultHTTPResponse handle(DefaultHTTPRequest request, DefaultHTTPResponse response, File webRoot) throws IOException {
 		
 		try {
 			File file = new File(webRoot, request.url().substring(1));

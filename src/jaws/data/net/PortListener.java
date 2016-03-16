@@ -1,19 +1,18 @@
-package jaws.net;
+package jaws.data.net;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import jaws.module.ModuleLoader;
-import jaws.net.util.Connection;
-import jaws.net.util.RequestHandler;
-import jaws.thread.ThreadPool;
+import jaws.business.net.RequestProcessor;
+import jaws.business.thread.ThreadPool;
+import jaws.data.module.ModuleLoader;
 
 public class PortListener {
 
 	public PortListener(int port) {
 		
-		ThreadPool requestHandlers = new ThreadPool(5);
+		ThreadPool threads = new ThreadPool(5);
 		ServerSocket server = null;
 		
 		try {
@@ -21,9 +20,9 @@ public class PortListener {
 			while (true) {
 				
 				Socket socket = server.accept();
-				Connection client = new Connection(socket);
-				final RequestHandler handler = new RequestHandler(ModuleLoader.getHandlerGetter());
-				requestHandlers.execute(() -> handler.handle(client));
+				SocketConnection client = new SocketConnection(socket);
+				final RequestProcessor handler = new RequestProcessor(ModuleLoader.getHandlerGetter());
+				threads.execute(() -> handler.handle(client));
 			}
 		} catch (IOException e) {
 			

@@ -5,9 +5,9 @@ package jaws.business.http;
  * 
  * @author Rik
  * 
- * @see jaws.business.http.HTTPRequest
+ * @see jaws.business.http.DefaultHTTPRequest
  */
-public class HTTPResponse extends HTTPObject<HTTPResponse> {
+public class DefaultHTTPResponse extends DefaultHTTPObject<DefaultHTTPResponse> {
 	
 	private int statusCode;
 	private String reason;
@@ -35,7 +35,7 @@ public class HTTPResponse extends HTTPObject<HTTPResponse> {
 	 * @param code the status code as an integer.
 	 * @return the HTTPResponse for method chaining.
 	 */
-	public HTTPResponse statusCode(int code) {
+	public DefaultHTTPResponse statusCode(int code) {
 		
 		statusCode = code;
 		return this;
@@ -57,7 +57,7 @@ public class HTTPResponse extends HTTPObject<HTTPResponse> {
 	 * @param reason the reason of the HTTP response.
 	 * @return the HTTPResopnse for method chaining.
 	 */
-	public HTTPResponse reason(String reason) {
+	public DefaultHTTPResponse reason(String reason) {
 		
 		this.reason = reason;
 		return this;
@@ -79,7 +79,7 @@ public class HTTPResponse extends HTTPObject<HTTPResponse> {
 	 * @param httpVersion the HTTP version as a String.
 	 * @return the HTTPResponse for method chaining.
 	 */
-	public HTTPResponse httpVersion(String httpVersion) {
+	public DefaultHTTPResponse httpVersion(String httpVersion) {
 		
 		this.httpVersion = httpVersion;
 		return this;
