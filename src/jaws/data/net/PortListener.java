@@ -9,10 +9,12 @@ import jaws.business.thread.ThreadPool;
 import jaws.data.module.ModuleLoader;
 
 public class PortListener {
+	
+	ThreadPool threadPool;
 
 	public PortListener(int port) {
 		
-		ThreadPool threads = new ThreadPool(5);
+		threadPool = new ThreadPool(5);
 		ServerSocket server = null;
 		
 		try {
@@ -22,7 +24,7 @@ public class PortListener {
 				Socket socket = server.accept();
 				SocketConnection client = new SocketConnection(socket);
 				final RequestProcessor handler = new RequestProcessor(ModuleLoader.getHandlerGetter());
-				threads.execute(() -> handler.handle(client));
+				threadPool.execute(() -> handler.handle(client));
 			}
 		} catch (IOException e) {
 			
@@ -40,5 +42,10 @@ public class PortListener {
 				}
 			}
 		}
+	}
+	
+	public void stop() {
+		
+		threadPool.stop();
 	}
 }

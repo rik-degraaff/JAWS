@@ -10,6 +10,8 @@ import java.util.Optional;
 
 import jaws.business.http.DefaultHTTPRequest;
 import jaws.business.http.DefaultHTTPResponse;
+import jaws.module.http.HTTPRequest;
+import jaws.module.http.HTTPResponse;
 
 public class Handler {
 	
@@ -30,9 +32,9 @@ public class Handler {
 		return Optional.empty();
 	}
 	
-	public DefaultHTTPResponse handle(DefaultHTTPRequest request, DefaultHTTPResponse response, File webroot) {
+	public HTTPResponse handle(HTTPRequest request, HTTPResponse response, File webroot) {
 		
-		return tryCrash(() -> (DefaultHTTPResponse) method.invoke(null, request, response, webroot));
+		return tryCrash(() -> (HTTPResponse) method.invoke(null, request, response, webroot));
 		
 		/*try {
 			return (HTTPResponse) method.invoke(null, request, response, webroot);

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import jaws.business.http.DefaultHTTPRequest;
 import jaws.business.http.DefaultHTTPResponse;
+import jaws.module.http.HTTPResponse;
 import jaws.module.net.Handle;
 
 public class DefaultHandler {
@@ -39,7 +40,7 @@ public class DefaultHandler {
 	}
 	
 	@Handle(extensions = {".*"}, priority = Integer.MIN_VALUE)
-	public static DefaultHTTPResponse handle(DefaultHTTPRequest request, DefaultHTTPResponse response, File webRoot) throws IOException {
+	public static HTTPResponse handle(DefaultHTTPRequest request, DefaultHTTPResponse response, File webRoot) throws IOException {
 		
 		try {
 			File file = new File(webRoot, request.url().substring(1));

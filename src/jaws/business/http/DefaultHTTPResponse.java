@@ -1,5 +1,7 @@
 package jaws.business.http;
 
+import jaws.module.http.HTTPResponse;
+
 /**
  * A class to represent an HTTP response from the webserver.
  * 
@@ -7,7 +9,7 @@ package jaws.business.http;
  * 
  * @see jaws.business.http.DefaultHTTPRequest
  */
-public class DefaultHTTPResponse extends DefaultHTTPObject<DefaultHTTPResponse> {
+public class DefaultHTTPResponse extends DefaultHTTPObject<HTTPResponse> implements HTTPResponse {
 	
 	private int statusCode;
 	private String reason;

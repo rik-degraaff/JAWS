@@ -21,7 +21,7 @@ import jaws.module.http.HTTPObject;
  * @see jaws.business.http.DefaultHTTPRequest
  * @see jaws.business.http.DefaultHTTPResponse
  */
-abstract class DefaultHTTPObject<T extends HTTPObject<T>> {
+abstract class DefaultHTTPObject<T extends HTTPObject<T>> implements HTTPObject<T> {
 
 	private Map<String, String> headerFields = new HashMap<>();
 	private ByteArrayOutputStream body = new ByteArrayOutputStream();
@@ -33,6 +33,7 @@ abstract class DefaultHTTPObject<T extends HTTPObject<T>> {
 	 * @param value the value of the header field.
 	 * @return the HTTP object for method chaining.
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	final public T header(String key, String value) {
 
@@ -46,6 +47,7 @@ abstract class DefaultHTTPObject<T extends HTTPObject<T>> {
 	 * @param key the key of the header field.
 	 * @return the value of the field.
 	 */
+	@Override
 	final public String header(String key) {
 
 		return headerFields.get(key);
@@ -57,6 +59,7 @@ abstract class DefaultHTTPObject<T extends HTTPObject<T>> {
 	 * @param body the body of the HTTP object as a byte array.
 	 * @return the HTTP object for method chaining.
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	final public T body(byte[] body) {
 
@@ -71,6 +74,7 @@ abstract class DefaultHTTPObject<T extends HTTPObject<T>> {
 	 * @param body the body of the HTTP object as a string.
 	 * @return the HTTP object for method chaining.
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	final public T body(String body) {
 
@@ -84,11 +88,13 @@ abstract class DefaultHTTPObject<T extends HTTPObject<T>> {
 	 *
 	 * @return the body of the HTTP object as a byte array.
 	 */
+	@Override
 	final public byte[] body() {
 
 		return body.toByteArray();
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
 	final public T body(ByteArrayOutputStream stream) {
 		

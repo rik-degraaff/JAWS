@@ -5,6 +5,12 @@ public class Starter {
 
 	public static void main(String[] args) {
 		
-		new PortListener(80);
+		PortListener portListener = new PortListener(80);
+		
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+			public void run() {
+				portListener.stop();
+			}
+		}));
 	}
 }
