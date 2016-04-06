@@ -5,13 +5,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Consumer;
 
-public class PortListener {
+public class PortListener implements Runnable {
+	
+	private ServerSocket server;
+	private int port;
+	private Consumer<Connection> connectionHandler;
 
 	public PortListener(int port, Consumer<Connection> connectionHandler) {
 
-		ServerSocket server = null;
-
-
+		this.port = port;
+		this.connectionHandler = connectionHandler;
+	}
+	
+	@Override
+	public void run() {
+		
 		try {
 
 			server = new ServerSocket(port);
