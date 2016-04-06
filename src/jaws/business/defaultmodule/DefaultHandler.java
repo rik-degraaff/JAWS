@@ -8,17 +8,16 @@ import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.Map;
 
-import jaws.business.http.DefaultHTTPRequest;
-import jaws.business.http.DefaultHTTPResponse;
+import jaws.module.http.HTTPRequest;
 import jaws.module.http.HTTPResponse;
 import jaws.module.net.Handle;
 
 public class DefaultHandler {
-	
+
 	private static final Map<String, String> mimeTypes = new HashMap<>();
-	
+
 	static {
-		
+
 		// plain text types
 		mimeTypes.put("html", "text/html");
 		mimeTypes.put("htm", "text/html");
@@ -26,22 +25,22 @@ public class DefaultHandler {
 		mimeTypes.put("txt", "text/plain");
 		mimeTypes.put("css", "text/css");
 		mimeTypes.put("js", "text/javascript");
-		
+
 		// image types
 		mimeTypes.put("png", "image/png");
 		mimeTypes.put("jpg", "image/jpeg");
 		mimeTypes.put("jpeg", "image/jpeg");
 		mimeTypes.put("bmp", "image/bmp");
 		mimeTypes.put("bm", "image/bmp");
-		
+
 		// video types
 		mimeTypes.put("mp4", "video/mp4");
 		mimeTypes.put("avi", "video/avi");
 	}
-	
+
 	@Handle(extensions = {".*"}, priority = Integer.MIN_VALUE)
-	public static HTTPResponse handle(DefaultHTTPRequest request, DefaultHTTPResponse response, File webRoot) throws IOException {
-		
+	public static HTTPResponse handle(HTTPRequest request, HTTPResponse response, File webRoot) throws IOException {
+
 		try {
 			File file = new File(webRoot, request.url().substring(1));
 			// if the requested path is a folder, try to get the 'index.html' file
@@ -51,7 +50,7 @@ public class DefaultHandler {
 				for(String fileName : fileNames) {
 					body += "<a href=\"" + request.url() + "/" + fileName + "\">" + fileName + (new File(file, fileName).isDirectory()?"/":"") + "</a><br>";
 				}
-				
+
 				response.body(body);
 			} else {
 				if(file.isDirectory() && new File(file, "index.html").exists()) {
@@ -69,9 +68,9 @@ public class DefaultHandler {
 		}  catch(NoSuchFileException e) {
 			response.statusCode(404).reason("Not Found").body("<h1>404 - Not Found</h1>");
 		}
-		
+
 		//System.out.println(response.body());
-		
+
 		return response.header("Content-Length", Integer.toString(response.body().length));
 	}
 }

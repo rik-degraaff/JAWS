@@ -23,14 +23,14 @@ import jaws.business.net.Handler;
 import jaws.module.net.Handle;
 
 public class ModuleLoader {
-	
-	private static final String moduleFolderPath = "D:\\Users\\Roy\\projects\\jaws\\modules";
-	
+
+	private static final String moduleFolderPath = "..\\modules"; //TODO read module directory from config file
+
 	private static List<Entry<String, Handler>> handlers;
-	
-	static {
+
+	public static void init(String moduleFolderPath) {
 		List<Entry<Integer, Entry<String, Optional<Handler>>>> unsortedHandlers = new ArrayList<>();
-		
+
 		// add default handler
 		System.out.println("Loading default handler");
 		{
@@ -46,8 +46,8 @@ public class ModuleLoader {
 				                                                         Handler.from(method))));
 			}
 		}
-		
-		{	
+
+		{
 			File moduleFolder = new File(moduleFolderPath);
 			if(!moduleFolder.isDirectory()) {
 				throw new RuntimeException("Module folder must be a directory");
@@ -77,11 +77,11 @@ public class ModuleLoader {
 						System.out.println("Loaded ClassLoader");
 						Class<?> clazz = null;
 						try {
-	                        
+
 	                        // Usually throws a NoClassDefFoundError
 	                        clazz = cl.loadClass(jarEntry.getName().substring(0, jarEntry.getName().length() - ".class".length()).replace("/", "."));
 						}catch(NoClassDefFoundError | ClassNotFoundException e) {
-	                        
+
 	                        // Get Fully-Qualified-Classname from Error message
 	                        String fqName = e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1, e.getMessage().length()).replace("/", ".");
 	                        System.out.println(e.getMessage());
@@ -104,15 +104,15 @@ public class ModuleLoader {
 							System.out.println("Found method: " + method.getName());
 							for(String extension : method.getAnnotation(Handle.class).extensions()) {
 								unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
-								                                     new SimpleEntry<>(extension,
-								                                                       Handler.from(method))));
+								                                       new SimpleEntry<>(extension,
+								                                                         Handler.from(method))));
 							}
 						}
 					});
 				}
 			}
 		}
-		
+
 		handlers = unsortedHandlers.stream()
 		                           .filter(e -> e.getValue().getValue().isPresent())
 		                           .sorted((e1, e2) -> e2.getKey().compareTo(e1.getKey()))
@@ -121,9 +121,9 @@ public class ModuleLoader {
 
 		System.out.println("Finished loading modules");
 	}
-	
+
 	private static Optional<Handler> getHandler(String extension) {
-		
+
 		return handlers.stream()
 		               .filter(e -> extension.matches(e.getKey()))
 		               .limit(1)
@@ -132,7 +132,7 @@ public class ModuleLoader {
 	}
 
 	public static Function<String, Optional<Handler>> getHandlerGetter() {
-		
+
 		return ModuleLoader::getHandler;
 	}
 }
