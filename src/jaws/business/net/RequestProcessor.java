@@ -14,13 +14,14 @@ import jaws.module.http.HTTPResponse;
 
 public class RequestProcessor {
 
-	private static final String webroot = "..\\www"; //TODO read webroot from config file
+	private String webroot;
 
 	private Function<String, Optional<Handler>> handlerGetter;
 
-	public RequestProcessor(Function<String, Optional<Handler>> handlerGetter) {
+	public RequestProcessor(Function<String, Optional<Handler>> handlerGetter, String webRoot) {
 
 		this.handlerGetter = handlerGetter;
+		this.webroot = webRoot;
 	}
 
 	public void handle(Connection client) {

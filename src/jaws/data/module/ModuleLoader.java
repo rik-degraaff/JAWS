@@ -24,8 +24,6 @@ import jaws.module.net.Handle;
 
 public class ModuleLoader {
 
-	private static final String moduleFolderPath = "..\\modules"; //TODO read module directory from config file
-
 	private static List<Entry<String, Handler>> handlers;
 
 	public static void init(String moduleFolderPath) {
