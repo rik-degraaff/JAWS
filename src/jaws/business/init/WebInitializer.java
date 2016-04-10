@@ -4,7 +4,6 @@ import static trycrash.Try.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,22 +32,7 @@ public final class WebInitializer {
 			initialized = true;
 		}
 
-		Properties properties = tryCatch(() -> loadConfig(fileLocation + "/" + webConfigFile)).orElseGet(() -> {
-			
-			Properties p = new Properties();
-			p.setProperty("module_folder", "../modules");
-			p.setProperty("webroot", "../www");
-			p.setProperty("port", "80");
-			File f = new File(fileLocation + "/" + webConfigFile);
-			f.getParentFile().mkdirs();
-			tryCrash(() -> {
-				f.createNewFile();
-				OutputStream out = new FileOutputStream(f);
-				p.store(out, "");
-				out.close();
-			});
-			return p;
-		});
+		Properties properties = loadConfig(fileLocation + "/" + webConfigFile);
 
 		ModuleLoader.init(properties.getProperty("module_folder"));
 		threadPool = new ThreadPool(5);
@@ -61,20 +45,38 @@ public final class WebInitializer {
 		).start();
 	}
 
-	private static Properties loadConfig(String fileLocation) throws FileNotFoundException { //TODO move to data layer
+	private static Properties loadConfig(String fileLocation) { //TODO move to data layer
 
-		Properties properties = new Properties();
-		InputStream inputStream = new FileInputStream(fileLocation);
-		//InputStream inputStream = WebInitializer.class.getClassLoader().getResourceAsStream(fileLocation);
-
-		if(inputStream != null) {
-			try {
-				properties.load(inputStream);
-			} catch (IOException e) {
-				throw new RuntimeException("Error loading config file", e);
+		return tryCatch(() -> {
+			
+			Properties properties = new Properties();
+			InputStream inputStream = new FileInputStream(fileLocation);
+	
+			if(inputStream != null) {
+				try {
+					properties.load(inputStream);
+				} catch (IOException e) {
+					throw new RuntimeException("Error loading config file", e);
+				}
 			}
-		}
-
-		return properties;
+	
+			return properties;
+		}).orElseGet(() -> {
+			
+			Properties p = new Properties();
+			p.setProperty("module_folder", "../modules");
+			p.setProperty("webroot", "../www");
+			p.setProperty("port", "80");
+			File f = new File(fileLocation);
+			f.getParentFile().mkdirs();
+			tryCrash(() -> {
+				f.createNewFile();
+				OutputStream out = new FileOutputStream(f);
+				p.store(out, "");
+				out.close();
+				System.out.println("Config file was not found, created a default at: " + f.getCanonicalPath());
+			});
+			return p;
+		});
 	}
 }
