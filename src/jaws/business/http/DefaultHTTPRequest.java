@@ -46,23 +46,12 @@ public class DefaultHTTPRequest extends DefaultHTTPObject<HTTPRequest> implement
 		return request;
 	}
 	
-	/**
-	 * Gets the method of the HTTP Request.
-	 * 
-	 * @return the method of the HTTP Request as an Enum.
-	 */
 	@Override
 	public RequestMethod method() {
 		
 		return requestMethod;
 	}
 	
-	/**
-	 * Sets the method of the HTTP Request.
-	 * 
-	 * @param method the method of the HTTP Request as an Enum.
-	 * @return the HTTPRequest for method chaining.
-	 */
 	@Override
 	public DefaultHTTPRequest method(RequestMethod method) {
 		
@@ -70,23 +59,12 @@ public class DefaultHTTPRequest extends DefaultHTTPObject<HTTPRequest> implement
 		return this;
 	}
 	
-	/**
-	 * Gets the url of the HTTP Request.
-	 * 
-	 * @return the url as a String.
-	 */
 	@Override
 	public String url() {
 		
 		return url;
 	}
 	
-	/**
-	 * Sets the url of the HTTP Request.
-	 * 
-	 * @param url the url as a String.
-	 * @return the HTTPRequest for method chaining.
-	 */
 	@Override
 	public DefaultHTTPRequest url(String url) {
 		
@@ -94,23 +72,12 @@ public class DefaultHTTPRequest extends DefaultHTTPObject<HTTPRequest> implement
 		return this;
 	}
 	
-	/**
-	 * Gets the HTTP version of the HTTP Request.
-	 * 
-	 * @return the HTTP version as a String.
-	 */
 	@Override
 	public String httpVersion() {
 		
 		return httpVersion;
 	}
 	
-	/**
-	 * Sets the HTTP version of the HTTP Request.
-	 * 
-	 * @param httpVersion the HTTP version as a String.
-	 * @return the HTTPRequest for method chaining.
-	 */
 	@Override
 	public DefaultHTTPRequest httpVersion(String httpVersion) {
 		

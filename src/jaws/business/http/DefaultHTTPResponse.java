@@ -21,67 +21,40 @@ public class DefaultHTTPResponse extends DefaultHTTPObject<HTTPResponse> impleme
 		return httpVersion + " " + statusCode + " " + reason;
 	}
 	
-	/**
-	 * Gets the status code of the HTTP response.
-	 * 
-	 * @return the status code as an integer.
-	 */
+	@Override
 	public int statusCode() {
 		
 		return statusCode;
 	}
 	
-	/**
-	 * Sets the status code of the HTTP response.
-	 * 
-	 * @param code the status code as an integer.
-	 * @return the HTTPResponse for method chaining.
-	 */
-	public DefaultHTTPResponse statusCode(int code) {
+	@Override
+	public HTTPResponse statusCode(int code) {
 		
 		statusCode = code;
 		return this;
 	}
 	
-	/**
-	 * Gets the reason of the HTTP response. 
-	 * 
-	 * @return the reason as a String.
-	 */
+	@Override
 	public String reason() {
 		
 		return reason;
 	}
 	
-	/**
-	 * Sets the reason of the HTTP response.
-	 * 
-	 * @param reason the reason of the HTTP response.
-	 * @return the HTTPResopnse for method chaining.
-	 */
-	public DefaultHTTPResponse reason(String reason) {
+	@Override
+	public HTTPResponse reason(String reason) {
 		
 		this.reason = reason;
 		return this;
 	}
 	
-	/**
-	 * Gets the HTTP version of the HTTP Response.
-	 * 
-	 * @return the HTTP version as a String.
-	 */
+	@Override
 	public String httpVersion() {
 		
 		return httpVersion;
 	}
 	
-	/**
-	 * Sets the HTTP version of the HTTP Response.
-	 * 
-	 * @param httpVersion the HTTP version as a String.
-	 * @return the HTTPResponse for method chaining.
-	 */
-	public DefaultHTTPResponse httpVersion(String httpVersion) {
+	@Override
+	public HTTPResponse httpVersion(String httpVersion) {
 		
 		this.httpVersion = httpVersion;
 		return this;
