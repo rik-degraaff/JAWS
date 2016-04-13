@@ -36,7 +36,7 @@ public final class WebInitializer {
 
 		ModuleLoader.init(properties.getProperty("module_folder"));
 		threadPool = new ThreadPool(5);
-		
+
 		new Thread(
 			new PortListener(Integer.parseInt(properties.getProperty("port")), client -> {
 				final RequestProcessor handler = new RequestProcessor(ModuleLoader.getHandlerGetter(), properties.getProperty("webroot"));
@@ -48,10 +48,10 @@ public final class WebInitializer {
 	private static Properties loadConfig(String fileLocation) { //TODO move to data layer
 
 		return tryCatch(() -> {
-			
+
 			Properties properties = new Properties();
 			InputStream inputStream = new FileInputStream(fileLocation);
-	
+
 			if(inputStream != null) {
 				try {
 					properties.load(inputStream);
@@ -59,24 +59,24 @@ public final class WebInitializer {
 					throw new RuntimeException("Error loading config file", e);
 				}
 			}
-	
+
 			return properties;
 		}).orElseGet(() -> {
-			
-			Properties p = new Properties();
-			p.setProperty("module_folder", "../modules");
-			p.setProperty("webroot", "../www");
-			p.setProperty("port", "80");
-			File f = new File(fileLocation);
-			f.getParentFile().mkdirs();
+
+			Properties properties = new Properties();
+			properties.setProperty("module_folder", "../modules");
+			properties.setProperty("webroot", "../www");
+			properties.setProperty("port", "80");
+			File file = new File(fileLocation);
+			file.getParentFile().mkdirs();
 			tryCrash(() -> {
-				f.createNewFile();
-				OutputStream out = new FileOutputStream(f);
-				p.store(out, "");
+				file.createNewFile();
+				OutputStream out = new FileOutputStream(file);
+				properties.store(out, "");
 				out.close();
-				System.out.println("Config file was not found, created a default at: " + f.getCanonicalPath());
+				System.out.println("Config file was not found, created a default at: " + file.getCanonicalPath());
 			});
-			return p;
+			return properties;
 		});
 	}
 }
