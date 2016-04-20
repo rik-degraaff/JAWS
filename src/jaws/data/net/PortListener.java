@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.function.Consumer;
 
 public class PortListener implements Runnable {
-	
+
 	private ServerSocket server;
 	private int port;
 	private Consumer<Connection> connectionHandler;
@@ -16,15 +16,16 @@ public class PortListener implements Runnable {
 		this.port = port;
 		this.connectionHandler = connectionHandler;
 	}
-	
+
 	@Override
 	public void run() {
-		
+
 		try {
 
 			server = new ServerSocket(port);
 			while (true) {
 
+				System.out.println("waiting for requests");
 				Socket socket = server.accept();
 				Connection client = new SocketConnection(socket);
 				connectionHandler.accept(client);
@@ -36,6 +37,7 @@ public class PortListener implements Runnable {
 			e.printStackTrace();
 		} finally {
 
+			System.out.println("entered finally clause");
 			if (server != null) {
 				try {
 					server.close();

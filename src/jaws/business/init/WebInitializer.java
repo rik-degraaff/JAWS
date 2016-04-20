@@ -1,6 +1,7 @@
 package jaws.business.init;
 
-import static trycrash.Try.*;
+import static trycrash.Try.tryCatch;
+import static trycrash.Try.tryCrash;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,15 +13,17 @@ import java.util.Properties;
 
 import jaws.business.net.RequestProcessor;
 import jaws.business.thread.ThreadPool;
+import jaws.context.Context;
 import jaws.data.module.ModuleLoader;
 import jaws.data.net.PortListener;
 
 public final class WebInitializer {
 
-	private static final String webConfigFile = "web.properties";
+	private static final String webConfigFile = "jaws.properties";
 
 	private static boolean initialized = false;
 	private static ThreadPool threadPool;
+	private static Thread portListenerThread;
 
 	private WebInitializer() {}
 
@@ -37,12 +40,32 @@ public final class WebInitializer {
 		ModuleLoader.init(properties.getProperty("module_folder"));
 		threadPool = new ThreadPool(5);
 
-		new Thread(
+		portListenerThread = new Thread(
 			new PortListener(Integer.parseInt(properties.getProperty("port")), client -> {
 				final RequestProcessor handler = new RequestProcessor(ModuleLoader.getHandlerGetter(), properties.getProperty("webroot"));
 				tryCatch(() -> threadPool.execute(() -> handler.handle(client)));
 			})
-		).start();
+		);
+		portListenerThread.start();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("interrupted");
+		portListenerThread.interrupt();
+	}
+
+	public static void deinit() {
+
+		if(!initialized) {
+			throw new IllegalStateException("WebInitializer not yet initialized");
+		} else {
+			initialized = false;
+		}
+
+		portListenerThread.interrupt();
+		threadPool.stop();
 	}
 
 	private static Properties loadConfig(String fileLocation) { //TODO move to data layer
@@ -74,7 +97,7 @@ public final class WebInitializer {
 				OutputStream out = new FileOutputStream(file);
 				properties.store(out, "");
 				out.close();
-				System.out.println("Config file was not found, created a default at: " + file.getCanonicalPath());
+				Context.logger.info("Config file was not found, created a default at: " + file.getCanonicalPath());
 			});
 			return properties;
 		});

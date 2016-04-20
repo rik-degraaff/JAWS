@@ -33,11 +33,5 @@ public class Handler {
 	public HTTPResponse handle(HTTPRequest request, HTTPResponse response, File webroot) {
 
 		return tryCrash(() -> (HTTPResponse) method.invoke(null, request, response, webroot));
-
-		/*try {
-			return (HTTPResponse) method.invoke(null, request, response, webroot);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException("Error invoking handler Method", e);
-		}*/
 	}
 }
