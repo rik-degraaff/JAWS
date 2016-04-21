@@ -37,8 +37,6 @@ public final class WebInitializer {
 
 		if(initialized) {
 			throw new IllegalStateException("WebInitializer already initialized");
-		} else {
-			initialized = true;
 		}
 
 		Properties properties = loadConfig(fileLocation + "/" + webConfigFile);
@@ -48,7 +46,8 @@ public final class WebInitializer {
 
 		portListenerThread = new StoppableThread(
 			new PortListener(Integer.parseInt(properties.getProperty("port")), client -> {
-				Context.logger.info("An http request has come in.");
+				
+				Context.logger.debug("thread" + Thread.currentThread().getId() + ": processing a connection.");
 				final RequestProcessor handler = new RequestProcessor(ModuleLoader.getHandlerGetter(), properties.getProperty("webroot"));
 				tryCrash(() -> threadPool.execute(() -> handler.handle(client)));
 			})
@@ -56,6 +55,7 @@ public final class WebInitializer {
 		portListenerThread.start();
 		
 		Context.logger.info("WebInitializer initialized.");
+		initialized = true;
 	}
 
 	public static void deinit() {
@@ -67,7 +67,9 @@ public final class WebInitializer {
 		}
 
 		portListenerThread.interrupt();
+		portListenerThread = null;
 		threadPool.stop();
+		threadPool = null;
 	}
 
 	private static Properties loadConfig(String fileLocation) { //TODO move to data layer

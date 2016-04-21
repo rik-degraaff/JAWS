@@ -20,8 +20,6 @@ public final class LoggingInitializer {
 
 		if(initialized) {
 			throw new IllegalStateException("LoggingInitializer already initialized");
-		} else {
-			initialized = true;
 		}
 
 		JALogger logger = new JALogger();
@@ -30,6 +28,8 @@ public final class LoggingInitializer {
 		Context.logger = logger;
 		
 		Context.logger.info("LoggingInitializer initialized.");
+		
+		initialized = false;
 	}
 
 	public static void deinit() {

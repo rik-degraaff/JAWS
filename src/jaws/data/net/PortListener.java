@@ -7,6 +7,7 @@ import java.net.SocketException;
 import java.util.function.Consumer;
 
 import jaws.business.thread.Stoppable;
+import jaws.context.Context;
 
 import static trycrash.Try.tryCatch;
 
@@ -29,8 +30,10 @@ public class PortListener implements Runnable, Stoppable {
 
 			server = new ServerSocket(port);
 			while (true) {
-
+				
+				Context.logger.debug("waiting to accept a socket");
 				Socket socket = server.accept();
+				Context.logger.debug("accepted a socket");
 				Connection client = new SocketConnection(socket);
 				connectionHandler.accept(client);
 			}
