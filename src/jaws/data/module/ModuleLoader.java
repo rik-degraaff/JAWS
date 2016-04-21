@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import jaws.business.defaultmodule.DefaultHandler;
 import jaws.business.net.Handler;
+import jaws.context.Context;
 import jaws.module.net.Handle;
 
 public class ModuleLoader {
@@ -30,7 +31,7 @@ public class ModuleLoader {
 		List<Entry<Integer, Entry<String, Optional<Handler>>>> unsortedHandlers = new ArrayList<>();
 
 		// add default handler
-		System.out.println("Loading default handler");
+		Context.logger.info("Loading default handler", "modules");
 		{
 			Class<?> clazz = DefaultHandler.class;
 			Method method = Arrays.asList(clazz.getDeclaredMethods())
@@ -50,29 +51,29 @@ public class ModuleLoader {
 			if(!moduleFolder.isDirectory()) {
 				throw new RuntimeException("Module folder must be a directory");
 			}
-			System.out.println("Searching through modules folder");
+			Context.logger.info("Searching through modules folder", "modules");
 			File[] files = moduleFolder.listFiles();
-			System.out.println("Found " + files.length + " potential modules");
+			Context.logger.info("Found " + files.length + " potential modules", "modules");
 			for(File file : files) {
-				System.out.println("Found file: " + file.getName());
+				Context.logger.info("Found file: " + file.getName(), "modules");
 				Optional<JarFile> optionalJar = tryCatch(() -> { return new JarFile(file); });
 				if(!optionalJar.isPresent()) {
 					continue;
 				}
 				JarFile jar = optionalJar.get();
-				System.out.println("Found jar: " + jar.getName());
+				Context.logger.info("Found jar: " + jar.getName(), "modules");
 				Enumeration<JarEntry> jarEntries = jar.entries();
 				while(jarEntries.hasMoreElements()) {
 					JarEntry jarEntry = jarEntries.nextElement();
 					if(jarEntry.isDirectory() || !jarEntry.getName().endsWith(".class")) {
 						continue;
 					}
-					System.out.println("Found class: " + jarEntry.getName());
+					Context.logger.info("Found class: " + jarEntry.getName(), "modules");
 
 					tryCatch(() -> {
 						URL[] urls = new URL[] { new URL("jar:file:" + jar.getName() + "!/") };
 						URLClassLoader cl = new URLClassLoader(urls);
-						System.out.println("Loaded ClassLoader");
+						Context.logger.info("Loaded ClassLoader", "modules");
 						Class<?> clazz = null;
 						try {
 
@@ -93,13 +94,13 @@ public class ModuleLoader {
 						if(clazz == null) {
 							return;
 						}
-						System.out.println("Loaded class");
+						Context.logger.info("Loaded class", "modules");
 						List<Method> methods = Arrays.asList(clazz.getDeclaredMethods())
 						                             .stream()
 						                             .filter(m -> m.isAnnotationPresent(Handle.class))
 						                             .collect(Collectors.toList());
 						for(Method method : methods) {
-							System.out.println("Found method: " + method.getName());
+							Context.logger.info("Found method: " + method.getName(), "modules");
 							for(String extension : method.getAnnotation(Handle.class).extensions()) {
 								unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
 								                                       new SimpleEntry<>(extension,
@@ -117,7 +118,7 @@ public class ModuleLoader {
 		                           .map(e -> new SimpleEntry<>(e.getValue().getKey(), e.getValue().getValue().get()))
 		                           .collect(Collectors.toList());
 
-		System.out.println("Finished loading modules");
+		Context.logger.info("Finished loading modules", "modules");
 	}
 
 	private static Optional<Handler> getHandler(String extension) {

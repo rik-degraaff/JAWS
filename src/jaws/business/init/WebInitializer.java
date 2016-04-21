@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 import jaws.business.net.RequestProcessor;
+import jaws.business.thread.StoppableThread;
 import jaws.business.thread.ThreadPool;
 import jaws.context.Context;
 import jaws.data.module.ModuleLoader;
@@ -23,9 +24,14 @@ public final class WebInitializer {
 
 	private static boolean initialized = false;
 	private static ThreadPool threadPool;
-	private static Thread portListenerThread;
+	private static StoppableThread portListenerThread;
 
 	private WebInitializer() {}
+	
+	public static boolean initialized() {
+		
+		return initialized;
+	}
 
 	public static void init(String fileLocation) {
 
@@ -40,20 +46,16 @@ public final class WebInitializer {
 		ModuleLoader.init(properties.getProperty("module_folder"));
 		threadPool = new ThreadPool(5);
 
-		portListenerThread = new Thread(
+		portListenerThread = new StoppableThread(
 			new PortListener(Integer.parseInt(properties.getProperty("port")), client -> {
+				Context.logger.info("An http request has come in.");
 				final RequestProcessor handler = new RequestProcessor(ModuleLoader.getHandlerGetter(), properties.getProperty("webroot"));
-				tryCatch(() -> threadPool.execute(() -> handler.handle(client)));
+				tryCrash(() -> threadPool.execute(() -> handler.handle(client)));
 			})
 		);
 		portListenerThread.start();
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("interrupted");
-		portListenerThread.interrupt();
+		
+		Context.logger.info("WebInitializer initialized.");
 	}
 
 	public static void deinit() {

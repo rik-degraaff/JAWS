@@ -12,7 +12,7 @@ public class StoppableThread extends Thread {
 	@Override
 	public void interrupt() {
 
-		stoppable.stop();
+		if (stoppable != null) stoppable.stop();
 		super.interrupt();
 	}
 }

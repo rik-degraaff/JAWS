@@ -3,9 +3,14 @@ package jaws.data.net;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.function.Consumer;
 
-public class PortListener implements Runnable {
+import jaws.business.thread.Stoppable;
+
+import static trycrash.Try.tryCatch;
+
+public class PortListener implements Runnable, Stoppable {
 
 	private ServerSocket server;
 	private int port;
@@ -25,26 +30,25 @@ public class PortListener implements Runnable {
 			server = new ServerSocket(port);
 			while (true) {
 
-				System.out.println("waiting for requests");
 				Socket socket = server.accept();
 				Connection client = new SocketConnection(socket);
 				connectionHandler.accept(client);
-//				final RequestProcessor handler = new RequestProcessor(ModuleLoader.getHandlerGetter());
-//				threadPool.execute(() -> handler.handle(client));
 			}
+		} catch (SocketException e) {			
+			// Expected SocketException when server.close() is called
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		} finally {
 
-			System.out.println("entered finally clause");
-			if (server != null) {
-				try {
-					server.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			if (server != null && !server.isClosed()) {
+				stop();
 			}
 		}
+	}
+
+	@Override
+	public synchronized void stop() {
+		
+		tryCatch(() -> server.close());
 	}
 }

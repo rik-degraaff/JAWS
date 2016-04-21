@@ -11,7 +11,12 @@ public final class LoggingInitializer {
 
 	private LoggingInitializer() {}
 
-	public void init() {
+	public static boolean initialized() {
+		
+		return initialized;
+	}
+
+	public static void init() {
 
 		if(initialized) {
 			throw new IllegalStateException("LoggingInitializer already initialized");
@@ -23,9 +28,11 @@ public final class LoggingInitializer {
 		logger.addListener(new StreamLogger(System.out));
 		logger.addListener(new FileLogger("../logs/jaws.log"));
 		Context.logger = logger;
+		
+		Context.logger.info("LoggingInitializer initialized.");
 	}
 
-	public void deinit() {
+	public static void deinit() {
 
 		if(!initialized) {
 			throw new IllegalStateException("LoggingInitializer not yet initialized");

@@ -21,7 +21,7 @@ public class PoolThread extends Thread {
 		while(!isStopped) {
 			
 			Runnable task = tryCatch(() -> taskQueue.take()).orElseGet(() -> () -> {});
-			tryCatch(() -> task.run());
+			task.run();
 		}
 	}
 	

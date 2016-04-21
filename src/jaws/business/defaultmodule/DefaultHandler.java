@@ -40,6 +40,9 @@ public class DefaultHandler {
 
 	@Handle(extensions = {".*"}, priority = Integer.MIN_VALUE)
 	public static HTTPResponse handle(HTTPRequest request, HTTPResponse response, File webRoot) throws IOException {
+		
+		//if(Math.random() > 0.8)
+		//	throw new RuntimeException("lol");
 
 		File file = new File(webRoot, request.url().substring(1));
 		if (file.exists()) {
