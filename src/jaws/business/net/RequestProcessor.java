@@ -4,21 +4,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import jaws.business.http.HTTPObjectFactory;
 import jaws.context.Context;
 import jaws.data.net.Connection;
 import jaws.module.http.HTTPRequest;
 import jaws.module.http.HTTPResponse;
+import jaws.module.http.RequestMethod;
 
 public class RequestProcessor {
 
 	private String webroot;
 
-	private Function<String, Optional<Handler>> handlerGetter;
+	private BiFunction<String, RequestMethod, Optional<Handler>> handlerGetter;
 
-	public RequestProcessor(Function<String, Optional<Handler>> handlerGetter, String webRoot) {
+	public RequestProcessor(BiFunction<String, RequestMethod, Optional<Handler>> handlerGetter, String webRoot) {
 
 		this.handlerGetter = handlerGetter;
 		this.webroot = webRoot;
@@ -34,7 +35,7 @@ public class RequestProcessor {
 			                    + request.toString(), "request");
 			HTTPResponse response = HTTPObjectFactory.createResponse().httpVersion("HTTP/1.1").statusCode(200).reason("OK")
 			                                                          .header("Content-Type", "text/html");
-			Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1)).get();
+			Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1), request.method()).get();
 
 			response = handler.handle(request, response, new File(webroot));
 			client.write(response.getOutputStream());

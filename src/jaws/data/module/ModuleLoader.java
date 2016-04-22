@@ -13,7 +13,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -21,15 +21,16 @@ import java.util.stream.Collectors;
 import jaws.business.defaultmodule.DefaultHandler;
 import jaws.business.net.Handler;
 import jaws.context.Context;
+import jaws.module.http.RequestMethod;
 import jaws.module.net.ContainsHandler;
 import jaws.module.net.Handle;
 
 public class ModuleLoader {
 
-	private static List<Entry<String, Handler>> handlers;
+	private static List<Entry<Entry<String, RequestMethod>, Handler>> handlers;
 
 	public static void init(String moduleFolderPath) {
-		List<Entry<Integer, Entry<String, Optional<Handler>>>> unsortedHandlers = new ArrayList<>();
+		List<Entry<Integer, Entry<Entry<String, RequestMethod>, Optional<Handler>>>> unsortedHandlers = new ArrayList<>();
 
 		// add default handler
 		Context.logger.info("Loading default handler", "modules");
@@ -41,9 +42,12 @@ public class ModuleLoader {
 			                      .findFirst()
 			                      .get();
 			for(String extension : method.getAnnotation(Handle.class).extensions()) {
-				unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
-				                                       new SimpleEntry<>(extension,
-				                                                         Handler.from(method))));
+				for(RequestMethod requestMethod : method.getAnnotation(Handle.class).methods()) {
+					unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
+				                                           new SimpleEntry<>(new SimpleEntry<>(extension,
+				                                                                               requestMethod),
+				                                                             Handler.from(method))));
+				}
 			}
 		}
 
@@ -103,9 +107,12 @@ public class ModuleLoader {
 						for(Method method : methods) {
 							Context.logger.info("Found method: " + method.getName(), "modules");
 							for(String extension : method.getAnnotation(Handle.class).extensions()) {
-								unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
-								                                       new SimpleEntry<>(extension,
-								                                                         Handler.from(method))));
+								for(RequestMethod requestMethod: method.getAnnotation(Handle.class).methods()) {
+									unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
+								                                           new SimpleEntry<>(new SimpleEntry<>(extension,
+								                                                                               requestMethod),
+								                                                             Handler.from(method))));
+								}
 							}
 						}
 					});
@@ -122,16 +129,17 @@ public class ModuleLoader {
 		Context.logger.info("Finished loading modules", "modules");
 	}
 
-	private static Optional<Handler> getHandler(String extension) {
+	private static Optional<Handler> getHandler(String extension, RequestMethod requestMethod) {
 
 		return handlers.stream()
-		               .filter(e -> extension.matches(e.getKey()))
+		               .filter(e -> extension.matches(e.getKey().getKey()))
+		               .filter(e -> requestMethod.equals(e.getKey().getValue()))
 		               .limit(1)
 		               .map(e -> e.getValue())
 		               .findFirst();
 	}
 
-	public static Function<String, Optional<Handler>> getHandlerGetter() {
+	public static BiFunction<String, RequestMethod, Optional<Handler>> getHandlerGetter() {
 
 		return ModuleLoader::getHandler;
 	}
