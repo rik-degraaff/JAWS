@@ -9,7 +9,7 @@ import jaws.context.Context;
 
 public class Starter {
 
-	private static final String configFile = "../config";
+	private static final String configFolder = "../config";
 	//private static final String logFile = "../logs";
 
 	public static void main(String[] args) {
@@ -34,8 +34,8 @@ public class Starter {
 	
 	private static void init() {
 		
-		if (!LoggingInitializer.initialized()) LoggingInitializer.init();
-		if (!WebInitializer.initialized()) WebInitializer.init(configFile);
+		if (!LoggingInitializer.initialized()) LoggingInitializer.init(configFolder);
+		if (!WebInitializer.initialized()) WebInitializer.init(configFolder);
 	}
 	
 	private static void deinit() {

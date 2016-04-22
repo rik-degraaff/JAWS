@@ -38,8 +38,13 @@ public final class WebInitializer {
 		if(initialized) {
 			throw new IllegalStateException("WebInitializer already initialized");
 		}
+		
+		Properties defaultProperties = new Properties();
+		defaultProperties.setProperty("module_folder", "../modules");
+		defaultProperties.setProperty("webroot", "../www");
+		defaultProperties.setProperty("port", "80");
 
-		Properties properties = loadConfig(fileLocation + "/" + webConfigFile);
+		Properties properties = loadConfig(fileLocation + "/" + webConfigFile, defaultProperties);
 
 		ModuleLoader.init(properties.getProperty("module_folder"));
 		threadPool = new ThreadPool(5);
@@ -72,7 +77,7 @@ public final class WebInitializer {
 		threadPool = null;
 	}
 
-	private static Properties loadConfig(String fileLocation) { //TODO move to data layer
+	static Properties loadConfig(String fileLocation, Properties defaultProperties) { //TODO move to data layer
 
 		return tryCatch(() -> {
 
@@ -90,20 +95,16 @@ public final class WebInitializer {
 			return properties;
 		}).orElseGet(() -> {
 
-			Properties properties = new Properties();
-			properties.setProperty("module_folder", "../modules");
-			properties.setProperty("webroot", "../www");
-			properties.setProperty("port", "80");
 			File file = new File(fileLocation);
 			file.getParentFile().mkdirs();
 			tryCrash(() -> {
 				file.createNewFile();
 				OutputStream out = new FileOutputStream(file);
-				properties.store(out, "");
+				defaultProperties.store(out, "");
 				out.close();
 				Context.logger.info("Config file was not found, created a default at: " + file.getCanonicalPath());
 			});
-			return properties;
+			return defaultProperties;
 		});
 	}
 }
