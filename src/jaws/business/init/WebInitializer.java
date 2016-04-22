@@ -92,7 +92,7 @@ public final class WebInitializer {
 				}
 			}
 
-			return properties;
+			return mergeProperties(defaultProperties, properties);
 		}).orElseGet(() -> {
 
 			File file = new File(fileLocation);
@@ -102,9 +102,24 @@ public final class WebInitializer {
 				OutputStream out = new FileOutputStream(file);
 				defaultProperties.store(out, "");
 				out.close();
-				Context.logger.info("Config file was not found, created a default at: " + file.getCanonicalPath());
+				if(Context.logger == null) {
+					System.out.println("Config file was not found, created a default at: " + file.getCanonicalPath());
+				} else {
+					Context.logger.info("Config file was not found, created a default at: " + file.getCanonicalPath());
+				}
 			});
 			return defaultProperties;
 		});
+	}
+	
+	static Properties mergeProperties(Properties mainProperties, Properties... otherProperties) {
+		
+		Properties result = new Properties(mainProperties);
+		
+		for(Properties properties : otherProperties) {
+			result.putAll(properties);
+		}
+		
+		return result;
 	}
 }

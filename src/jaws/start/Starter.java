@@ -19,9 +19,15 @@ public class Starter {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
-			Context.logger.error("An uncaught error occured:" + System.lineSeparator()
-			                     + sw.toString());
-			Context.logger.info("Restarting");
+			if(Context.logger == null) {
+				System.out.println("An uncaught error occured:" + System.lineSeparator()
+                                   + sw.toString());
+				System.out.println("Restarting");
+			} else {
+				Context.logger.error("An uncaught error occured:" + System.lineSeparator()
+				                     + sw.toString());
+				Context.logger.info("Restarting");
+			}
 			Thread thread = new Thread(() -> {
 				deinit();
 				init();

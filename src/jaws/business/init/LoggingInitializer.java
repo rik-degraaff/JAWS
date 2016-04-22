@@ -28,6 +28,7 @@ public final class LoggingInitializer {
 		}
 		
 		Properties defaultProperties = new Properties();
+		defaultProperties.setProperty("log_folder", "../logs");
 		defaultProperties.setProperty("loglevel", "INFO");
 
 		Properties properties = WebInitializer.loadConfig(fileLocation + "/" + logConfigFile, defaultProperties); //TODO when moved, to data layer update this too
@@ -41,7 +42,7 @@ public final class LoggingInitializer {
 		
 		JALogger logger = new JALogger(logLevel);
 		logger.addListener(new StreamLogger(System.out));
-		logger.addListener(new FileLogger("../logs/jaws.log"));
+		logger.addListener(new FileLogger(properties.getProperty("log_folder") + "/jaws.log"));
 		Context.logger = logger;
 		
 		Context.logger.info("LoggingInitializer initialized.");
