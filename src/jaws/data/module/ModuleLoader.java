@@ -27,10 +27,10 @@ import jaws.module.net.Handle;
 
 public class ModuleLoader {
 
-	private static List<Entry<Entry<String, RequestMethod>, Handler>> handlers;
+	private static List<Entry<Entry<List<String>, List<RequestMethod>>, Handler>> handlers;
 
 	public static void init(String moduleFolderPath) {
-		List<Entry<Integer, Entry<Entry<String, RequestMethod>, Optional<Handler>>>> unsortedHandlers = new ArrayList<>();
+		List<Entry<Integer, Entry<Entry<List<String>, List<RequestMethod>>, Optional<Handler>>>> unsortedHandlers = new ArrayList<>();
 
 		// add default handler
 		Context.logger.info("Loading default handler", "modules");
@@ -41,14 +41,11 @@ public class ModuleLoader {
 			                      .filter(m -> m.isAnnotationPresent(Handle.class))
 			                      .findFirst()
 			                      .get();
-			for(String extension : method.getAnnotation(Handle.class).extensions()) {
-				for(RequestMethod requestMethod : method.getAnnotation(Handle.class).methods()) {
-					unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
-				                                           new SimpleEntry<>(new SimpleEntry<>(extension,
-				                                                                               requestMethod),
-				                                                             Handler.from(method))));
-				}
-			}
+			
+			unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
+			                                       new SimpleEntry<>(new SimpleEntry<>(Arrays.asList(method.getAnnotation(Handle.class).extensions()),
+			                                                                           Arrays.asList(method.getAnnotation(Handle.class).methods())),
+			                                                         Handler.from(method))));
 		}
 
 		{
@@ -104,16 +101,13 @@ public class ModuleLoader {
 						                             .stream()
 						                             .filter(m -> m.isAnnotationPresent(Handle.class))
 						                             .collect(Collectors.toList());
+						
 						for(Method method : methods) {
 							Context.logger.info("Found method: " + method.getName(), "modules");
-							for(String extension : method.getAnnotation(Handle.class).extensions()) {
-								for(RequestMethod requestMethod: method.getAnnotation(Handle.class).methods()) {
-									unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
-								                                           new SimpleEntry<>(new SimpleEntry<>(extension,
-								                                                                               requestMethod),
-								                                                             Handler.from(method))));
-								}
-							}
+							unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
+                                    new SimpleEntry<>(new SimpleEntry<>(Arrays.asList(method.getAnnotation(Handle.class).extensions()),
+                                                                        Arrays.asList(method.getAnnotation(Handle.class).methods())),
+                                                      Handler.from(method))));
 						}
 					});
 				}
@@ -126,14 +120,15 @@ public class ModuleLoader {
 		                           .map(e -> new SimpleEntry<>(e.getValue().getKey(), e.getValue().getValue().get()))
 		                           .collect(Collectors.toList());
 
+		Context.logger.debug(handlers.toString());
 		Context.logger.info("Finished loading modules", "modules");
 	}
 
 	private static Optional<Handler> getHandler(String extension, RequestMethod requestMethod) {
 
 		return handlers.stream()
-		               .filter(e -> extension.matches(e.getKey().getKey()))
-		               .filter(e -> requestMethod.equals(e.getKey().getValue()))
+		               .filter(e -> e.getKey().getKey().stream().anyMatch(f -> extension.matches(f)))
+		               .filter(e -> e.getKey().getValue().contains(requestMethod))
 		               .limit(1)
 		               .map(e -> e.getValue())
 		               .findFirst();
