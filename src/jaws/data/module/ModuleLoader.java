@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import jaws.business.defaultmodule.DefaultHandler;
 import jaws.business.net.Handler;
 import jaws.context.Context;
+import jaws.module.net.ContainsHandler;
 import jaws.module.net.Handle;
 
 public class ModuleLoader {
@@ -91,7 +92,7 @@ public class ModuleLoader {
 	                        }
 						}
 						cl.close();
-						if(clazz == null) {
+						if(clazz == null || !clazz.isAnnotationPresent(ContainsHandler.class)) {
 							return;
 						}
 						Context.logger.info("Loaded class", "modules");
