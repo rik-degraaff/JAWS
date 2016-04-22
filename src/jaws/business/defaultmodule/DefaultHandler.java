@@ -56,9 +56,12 @@ public class DefaultHandler {
 				if(file.isDirectory() && !new File(file, "index.html").exists() && request.method() != RequestMethod.HEAD) {
 					
 					String body = "";
-					String[] fileNames = file.list();
+					final String[] fileNames = file.list();
+					final String url = request.url();
 					for(String fileName : fileNames) {
-						body += "<a href=\"" + request.url() + "/" + fileName + "\">" + fileName + (new File(file, fileName).isDirectory()?"/":"") + "</a><br>";
+						body += "<a href=\"" + url + ((url.charAt(url.length() - 1) == '/') ? "" : "/") + fileName + "\">"
+					          + fileName + (new File(file, fileName).isDirectory()?"/":"")
+					          + "</a><br>";
 					}
 	
 					response.body(body);
