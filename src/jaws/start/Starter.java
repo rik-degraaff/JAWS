@@ -3,19 +3,20 @@ package jaws.start;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import jaws.business.init.ConfigClientInitializer;
 import jaws.business.init.LoggingInitializer;
 import jaws.business.init.WebInitializer;
 import jaws.context.Context;
+import jaws.data.config.ConfigLoader;
 
 public class Starter {
 
-	private static final String configFolder = "../config";
-	//private static final String logFile = "../logs";
+	private static final String configFolder = "../config/";
 
 	public static void main(String[] args) {
-		
+
 		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-			
+
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
@@ -34,21 +35,23 @@ public class Starter {
 			});
 			thread.start();
 		});
-		
+
 		init();
 	}
-	
+
 	private static void init() {
-		
-		if (!LoggingInitializer.initialized()) LoggingInitializer.init(configFolder);
-		if (!WebInitializer.initialized()) WebInitializer.init(configFolder);
+
+		if (!ConfigLoader.initialized()) ConfigLoader.init(configFolder);
+		if (!LoggingInitializer.initialized()) LoggingInitializer.init();
+		if (!WebInitializer.initialized()) WebInitializer.init();
+		if (!ConfigClientInitializer.initialized()) ConfigClientInitializer.init();
 	}
-	
+
 	private static void deinit() {
-		
+
+		if (ConfigClientInitializer.initialized()) ConfigClientInitializer.deinit();
 		if (WebInitializer.initialized()) WebInitializer.deinit();
 		if (LoggingInitializer.initialized()) LoggingInitializer.deinit();
+		if (ConfigLoader.initialized()) ConfigLoader.deinit();
 	}
-	
-	
 }
