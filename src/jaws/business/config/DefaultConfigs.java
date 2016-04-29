@@ -23,6 +23,11 @@ class DefaultConfigs {
 		web.setProperty("webroot", "../www");
 		web.setProperty("port", "80");
 		defaultProperties.put("web", web);
+		
+		// configClient
+		Properties configClient = new Properties();
+		configClient.setProperty("port", "8080");
+		defaultProperties.put("configClient", configClient);
 	}
 
 	public static Properties getDefaultConfig(String configName) {
