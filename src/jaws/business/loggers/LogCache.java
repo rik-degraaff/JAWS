@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import jal.business.log.Log;
 
-public class LogCache implements Consumer<Log> {
+public class LogCache implements Consumer<Log>, LogAccessor {
 
 	private List<Log> cachedLogs;
 	private int cacheSize;
@@ -29,11 +29,13 @@ public class LogCache implements Consumer<Log> {
 		}
 	}
 
+	@Override
 	public List<Log> getLogs() {
 
 		return new ArrayList<>(cachedLogs);
 	}
 
+	@Override
 	public List<Log> getLogsSince(Date timestamp) {
 
 		return cachedLogs.stream().filter(log -> log.getTimeStamp().after(timestamp)).collect(Collectors.toList());

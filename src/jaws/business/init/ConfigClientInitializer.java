@@ -1,8 +1,12 @@
 package jaws.business.init;
 
+import java.util.Optional;
 import java.util.Properties;
 
+import jal.business.log.JALogger;
 import jaws.business.config.ConfigFactory;
+import jaws.business.config.ConfigRequestProcessor;
+import jaws.business.loggers.LogCache;
 import jaws.business.thread.StoppableThread;
 import jaws.data.net.PortListener;
 
@@ -12,6 +16,7 @@ public class ConfigClientInitializer {
 
 	private static boolean initialized = false;
 	private static StoppableThread portListenerThread;
+	private static LogCache logCache;
 
 	private ConfigClientInitializer() {}
 
@@ -19,18 +24,21 @@ public class ConfigClientInitializer {
 		return initialized;
 	}
 
-	public static void init() {
+	public static void init(Optional<JALogger> logger) {
 
 		if(initialized) {
 			throw new IllegalStateException("ConfigClientInitializer already initialized");
 		}
+
+		logCache = new LogCache(100);
+		logger.ifPresent(l -> l.addListener(logCache));
 
 		Properties properties = ConfigFactory.getConfig(configName);
 
 		portListenerThread = new StoppableThread(
 			new PortListener(Integer.parseInt(properties.getProperty("port")), client -> {
 
-				//TODO handle configclient requests
+				new ConfigRequestProcessor(logCache).handle(client);
 			})
 		);
 		portListenerThread.start();

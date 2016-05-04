@@ -3,11 +3,13 @@ package jaws.start;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import jal.business.log.JALogger;
 import jaws.business.init.ConfigClientInitializer;
 import jaws.business.init.LoggingInitializer;
 import jaws.business.init.WebInitializer;
 import jaws.context.Context;
 import jaws.data.config.ConfigLoader;
+import jaws.util.Box;
 
 public class Starter {
 
@@ -42,9 +44,10 @@ public class Starter {
 	private static void init() {
 
 		if (!ConfigLoader.initialized()) ConfigLoader.init(configFolder);
-		if (!LoggingInitializer.initialized()) LoggingInitializer.init();
+		Box<JALogger> loggerBox = new Box<>();
+		if (!LoggingInitializer.initialized()) LoggingInitializer.init(loggerBox);
 		if (!WebInitializer.initialized()) WebInitializer.init();
-		if (!ConfigClientInitializer.initialized()) ConfigClientInitializer.init();
+		if (!ConfigClientInitializer.initialized()) ConfigClientInitializer.init(loggerBox.unbox());
 	}
 
 	private static void deinit() {

@@ -8,6 +8,7 @@ import jal.business.loggers.FileLogger;
 import jal.business.loggers.StreamLogger;
 import jaws.business.config.ConfigFactory;
 import jaws.context.Context;
+import jaws.util.Box;
 
 public final class LoggingInitializer {
 
@@ -22,7 +23,7 @@ public final class LoggingInitializer {
 		return initialized;
 	}
 
-	public static void init() {
+	public static void init(Box<JALogger> loggerBox) {
 
 		if(initialized) {
 			throw new IllegalStateException("LoggingInitializer already initialized");
@@ -41,6 +42,7 @@ public final class LoggingInitializer {
 		logger.addListener(new StreamLogger(System.out));
 		logger.addListener(new FileLogger(properties.getProperty("log_folder") + "/jaws.log"));
 		Context.logger = logger;
+		loggerBox.box(logger);
 
 		Context.logger.info("LoggingInitializer initialized.");
 

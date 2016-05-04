@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/TryCrash"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JAWS_module_base"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JAL"/>
+	<classpathentry kind="lib" path="lib/json-20160212.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
