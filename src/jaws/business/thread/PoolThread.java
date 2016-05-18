@@ -8,31 +8,29 @@ public class PoolThread extends Thread {
 
 	private BlockingQueue<Runnable> taskQueue;
 	private boolean isStopped;
-	
+
 	public PoolThread(BlockingQueue<Runnable> taskQueue) {
-		
+
 		this.taskQueue = taskQueue;
 		isStopped = false;
 	}
 
 	@Override
 	public void run() {
-		
+
 		while(!isStopped) {
-			
-			Runnable task = tryCatch(() -> taskQueue.take()).orElseGet(() -> () -> {});
-			task.run();
+			tryCatch(() -> taskQueue.take()).ifPresent(Runnable::run);
 		}
 	}
-	
+
 	public synchronized void doStop() {
-		
+
 		isStopped = true;
 		interrupt();
 	}
-	
+
 	public synchronized boolean isStopped() {
-		
+
 		return isStopped;
 	}
 }

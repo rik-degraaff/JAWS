@@ -7,10 +7,11 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -27,10 +28,10 @@ import jaws.module.net.Handle;
 
 public class ModuleLoader {
 
-	private static List<Entry<Entry<List<String>, List<RequestMethod>>, Handler>> handlers;
+	private static Map<Entry<List<String>, List<RequestMethod>>, Handler> handlers;
 
 	public static void init(String moduleFolderPath) {
-		List<Entry<Integer, Entry<Entry<List<String>, List<RequestMethod>>, Optional<Handler>>>> unsortedHandlers = new ArrayList<>();
+		Map<Integer, Entry<Entry<List<String>, List<RequestMethod>>, Optional<Handler>>> unsortedHandlers = new HashMap<>();
 
 		// add default handler
 		Context.logger.info("Loading default handler", "modules");
@@ -41,11 +42,11 @@ public class ModuleLoader {
 			                      .filter(m -> m.isAnnotationPresent(Handle.class))
 			                      .findFirst()
 			                      .get();
-			
-			unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
-			                                       new SimpleEntry<>(new SimpleEntry<>(Arrays.asList(method.getAnnotation(Handle.class).extensions()),
-			                                                                           Arrays.asList(method.getAnnotation(Handle.class).methods())),
-			                                                         Handler.from(method))));
+
+			unsortedHandlers.put(method.getAnnotation(Handle.class).priority(),
+			                     new SimpleEntry<>(new SimpleEntry<>(Arrays.asList(method.getAnnotation(Handle.class).extensions()),
+			                                                         Arrays.asList(method.getAnnotation(Handle.class).methods())),
+			                                       Handler.from(method)));
 		}
 
 		{
@@ -101,24 +102,24 @@ public class ModuleLoader {
 						                             .stream()
 						                             .filter(m -> m.isAnnotationPresent(Handle.class))
 						                             .collect(Collectors.toList());
-						
+
 						for(Method method : methods) {
 							Context.logger.info("Found method: " + method.getName(), "modules");
-							unsortedHandlers.add(new SimpleEntry<>(method.getAnnotation(Handle.class).priority(),
-                                    new SimpleEntry<>(new SimpleEntry<>(Arrays.asList(method.getAnnotation(Handle.class).extensions()),
-                                                                        Arrays.asList(method.getAnnotation(Handle.class).methods())),
-                                                      Handler.from(method))));
+							unsortedHandlers.put(method.getAnnotation(Handle.class).priority(),
+                                                 new SimpleEntry<>(new SimpleEntry<>(Arrays.asList(method.getAnnotation(Handle.class).extensions()),
+                                                                                     Arrays.asList(method.getAnnotation(Handle.class).methods())),
+                                                                   Handler.from(method)));
 						}
 					});
 				}
 			}
 		}
 
-		handlers = unsortedHandlers.stream()
+		handlers = unsortedHandlers.entrySet().stream()
 		                           .filter(e -> e.getValue().getValue().isPresent())
 		                           .sorted((e1, e2) -> e2.getKey().compareTo(e1.getKey()))
 		                           .map(e -> new SimpleEntry<>(e.getValue().getKey(), e.getValue().getValue().get()))
-		                           .collect(Collectors.toList());
+		                           .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
 		Context.logger.debug(handlers.toString());
 		Context.logger.info("Finished loading modules", "modules");
@@ -126,7 +127,7 @@ public class ModuleLoader {
 
 	private static Optional<Handler> getHandler(String extension, RequestMethod requestMethod) {
 
-		return handlers.stream()
+		return handlers.entrySet().stream()
 		               .filter(e -> e.getKey().getKey().stream().anyMatch(f -> extension.matches(f)))
 		               .filter(e -> e.getKey().getValue().contains(requestMethod))
 		               .limit(1)

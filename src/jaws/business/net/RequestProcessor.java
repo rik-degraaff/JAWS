@@ -25,7 +25,7 @@ public class RequestProcessor {
 		this.webroot = webRoot;
 	}
 
-	public void handle(Connection client) {
+	public void process(Connection client) {
 
 		try {
 

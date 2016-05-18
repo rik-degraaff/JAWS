@@ -42,8 +42,8 @@ public final class WebInitializer {
 			new PortListener(Integer.parseInt(properties.getProperty("port")), client -> {
 
 				Context.logger.debug("thread" + Thread.currentThread().getId() + ": processing a connection.");
-				final RequestProcessor handler = new RequestProcessor(ModuleLoader.getHandlerGetter(), properties.getProperty("webroot"));
-				tryCrash(() -> threadPool.execute(() -> handler.handle(client)));
+				final RequestProcessor processor = new RequestProcessor(ModuleLoader.getHandlerGetter(), properties.getProperty("webroot"));
+				tryCrash(() -> threadPool.execute(() -> processor.process(client)));
 			})
 		);
 		portListenerThread.start();
