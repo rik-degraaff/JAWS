@@ -1,0 +1,2 @@
+jaws.data.net.Connection connection = new jaws.data.net.SocketConnection(new java.net.Socket("localhost", 8080));
+connection.write(("{'updateLogs': {'lastUpdate': " + new java.util.Date().getTime() + "}}").getBytes());

@@ -30,16 +30,18 @@ public class PortListener implements Runnable, Stoppable {
 
 			server = new ServerSocket(port);
 			while (true) {
-				
-				Context.logger.debug("waiting to accept a socket");
+
+				Context.logger.debug("waiting to accept a socket", Integer.toString(port));
 				Socket socket = server.accept();
-				Context.logger.debug("accepted a socket");
+				Context.logger.debug("accepted a socket", Integer.toString(port));
 				Connection client = new SocketConnection(socket);
 				connectionHandler.accept(client);
 			}
-		} catch (SocketException e) {			
+		} catch (SocketException e) {
 			// Expected SocketException when server.close() is called
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
 
@@ -51,7 +53,7 @@ public class PortListener implements Runnable, Stoppable {
 
 	@Override
 	public synchronized void stop() {
-		
+
 		tryCatch(() -> server.close());
 	}
 }
