@@ -17,6 +17,15 @@ public class ConfigFactory {
 			return defaultProperties;
 		}
 	}
+	
+	public static void saveConfig(String configName, Properties config) {
+		
+		if(ConfigLoader.configExists(configName)) {
+			ConfigLoader.saveConfig(configName, mergeProperties(ConfigLoader.loadConfig(configName), config));
+		} else {
+			ConfigLoader.saveConfig(configName, config);
+		}
+	}
 
 	public static Properties mergeProperties(Properties mainProperties, Properties... otherProperties) {
 

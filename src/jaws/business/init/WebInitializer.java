@@ -65,4 +65,9 @@ public final class WebInitializer {
 
 		initialized = false;
 	}
+	
+	public static void reinit() {
+		if(initialized) deinit();
+		init();
+	}
 }
