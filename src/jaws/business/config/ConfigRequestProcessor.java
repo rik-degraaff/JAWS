@@ -68,22 +68,22 @@ public class ConfigRequestProcessor {
 
 				logUpdate.put("lastUpdate", newLastUpdate);
 				logUpdate.put("logs", newLogs.stream()
-				                              .map(Log::toJSON)
-				                              .collect(JSONArray::new, JSONArray::put, (array1, array2) -> array2.forEach(array1::put)));
+				                             .map(Log::toJSON)
+				                             .collect(JSONArray::new, JSONArray::put, (array1, array2) -> array2.forEach(array1::put)));
 			}
-			
+
 			if(request.has("updateConfigs")) {
 				JSONObject configUpdate = new JSONObject();
 				response.put("configUpdate", configUpdate);
-				
+
 				JSONArray updateConfigs = request.getJSONArray("updateConfigs");
-				
+
 				for(Object configNameObject : updateConfigs) {
-					
+
 					String configName = (String) configNameObject;
-						
+
 					Properties config = ConfigFactory.getConfig(configName);
-					
+
 					JSONObject configJSON = new JSONObject();
 					configUpdate.put(configName, configJSON);
 					for(Entry<Object, Object> configEntry : config.entrySet()) {
@@ -91,23 +91,23 @@ public class ConfigRequestProcessor {
 					}
 				}
 			}
-			
+
 			if(request.has("saveConfigs")) {
 				JSONObject saveConfigs = request.getJSONObject("saveConfigs");
-				
+
 				for(String configName : saveConfigs.keySet()) {
-						
+
 					Properties config = ConfigFactory.getConfig(configName);
 					JSONObject newConfigJSON = saveConfigs.getJSONObject(configName);
-					
+
 					for(String newConfigKey : newConfigJSON.keySet()) {
 						String newConfigValue = (String) newConfigJSON.get(newConfigKey);
 						config.put(newConfigKey, newConfigValue);
 					}
-					
+
 					ConfigFactory.saveConfig(configName, config);
 				}
-				
+
 				WebInitializer.reinit();
 			}
 
