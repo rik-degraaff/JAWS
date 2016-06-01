@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.json.JSONArray;
@@ -84,11 +83,7 @@ public class ConfigRequestProcessor {
 
 					Properties config = ConfigFactory.getConfig(configName);
 
-					JSONObject configJSON = new JSONObject();
-					configUpdate.put(configName, configJSON);
-					for(Entry<Object, Object> configEntry : config.entrySet()) {
-						configJSON.put((String) configEntry.getKey(), configEntry.getValue());
-					}
+					configUpdate.put(configName, ConfigFactory.configToJSON(config));
 				}
 			}
 
