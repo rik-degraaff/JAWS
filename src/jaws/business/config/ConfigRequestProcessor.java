@@ -56,13 +56,13 @@ public class ConfigRequestProcessor {
 					lastUpdate = new Date(updateLogs.getInt("lastUpdate"));
 					newLogs = logCache.getLogsSince(lastUpdate);
 					newLastUpdate = newLogs.stream()
-                                           .map(log -> log.getTimeStamp())
+                                           .map(Log::getTimeStamp)
                                            .max(Date::compareTo).orElse(lastUpdate);
 				} else {
 					Date currentDate = new Date();
 					newLogs = logCache.getLogs();
 					newLastUpdate = newLogs.stream()
-                                           .map(log -> log.getTimeStamp())
+                                           .map(Log::getTimeStamp)
                                            .max(Date::compareTo).orElse(currentDate);
 				}
 
