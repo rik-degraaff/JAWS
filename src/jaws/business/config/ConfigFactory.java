@@ -1,6 +1,9 @@
 package jaws.business.config;
 
 import java.util.Properties;
+import java.util.Map.Entry;
+
+import org.json.JSONObject;
 
 import jaws.data.config.ConfigLoader;
 
@@ -17,9 +20,9 @@ public class ConfigFactory {
 			return defaultProperties;
 		}
 	}
-	
+
 	public static void saveConfig(String configName, Properties config) {
-		
+
 		if(ConfigLoader.configExists(configName)) {
 			ConfigLoader.saveConfig(configName, mergeProperties(ConfigLoader.loadConfig(configName), config));
 		} else {
@@ -36,5 +39,15 @@ public class ConfigFactory {
 		}
 
 		return result;
+	}
+
+	public static JSONObject configToJSON(Properties config) {
+
+		JSONObject configJSON = new JSONObject();
+		for(Entry<Object, Object> configEntry : config.entrySet()) {
+			configJSON.put((String) configEntry.getKey(), configEntry.getValue());
+		}
+
+		return configJSON;
 	}
 }
