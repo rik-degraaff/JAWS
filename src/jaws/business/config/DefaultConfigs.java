@@ -3,6 +3,7 @@ package jaws.business.config;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 class DefaultConfigs {
 
@@ -23,7 +24,7 @@ class DefaultConfigs {
 		web.setProperty("webroot", "../www");
 		web.setProperty("port", "80");
 		defaultProperties.put("web", web);
-		
+
 		// configClient
 		Properties configClient = new Properties();
 		configClient.setProperty("port", "8080");
@@ -38,5 +39,10 @@ class DefaultConfigs {
 		} else {
 			return new Properties();
 		}
+	}
+
+	public static Set<String> getConfigNames() {
+
+		return defaultProperties.keySet();
 	}
 }
