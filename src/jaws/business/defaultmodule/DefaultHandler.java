@@ -12,6 +12,11 @@ import jaws.module.http.HTTPResponse;
 import jaws.module.http.RequestMethod;
 import jaws.module.net.Handle;
 
+/**
+ * A standard HTTP request handler, which simply returns the contents of the specified file with the appropriate file type.
+ * 
+ * @author Roy *
+ */
 public class DefaultHandler {
 
 	private static final Map<String, String> mimeTypes = new HashMap<>();
@@ -41,9 +46,6 @@ public class DefaultHandler {
 	@Handle(extensions = {".*"}, methods = {RequestMethod.GET, RequestMethod.HEAD, RequestMethod.OPTIONS}, priority = Integer.MIN_VALUE)
 	public static HTTPResponse handle(HTTPRequest request, HTTPResponse response, File webRoot) throws IOException {
 
-		//if(Math.random() > 0.8)
-		//	throw new RuntimeException("lol");
-
 		File file = new File(webRoot, request.url().substring(1));
 		if (file.exists()) {
 			if (request.method() == RequestMethod.OPTIONS) {
@@ -52,7 +54,7 @@ public class DefaultHandler {
 				        .header("Allow", "GET, HEAD, OPTIONS");
 			} else {
 
-				// if the requested path is a folder, try to get the 'index.html' file
+				// if the requested path is a folder and there is no index.html file, return a directory listing
 				if(file.isDirectory() && !new File(file, "index.html").exists() && request.method() != RequestMethod.HEAD) {
 
 					String body = "";
@@ -65,8 +67,9 @@ public class DefaultHandler {
 					}
 
 					response.body(body);
-				} else {
-
+				} else { 
+					
+					// If aindex.html file exists, return that.
 					if(file.isDirectory() && new File(file, "index.html").exists()) {
 						file = new File(file, "index.html");
 					}
@@ -83,7 +86,7 @@ public class DefaultHandler {
 					}
 				}
 			}
-		} else {
+		} else { // return a 404 when the file isn't found.
 			response.statusCode(404).reason("Not Found").body("<h1>404 - Not Found</h1>");
 		}
 
