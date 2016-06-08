@@ -14,7 +14,16 @@ import java.util.Properties;
 
 import jaws.context.Context;
 
-public class ConfigLoader {
+/**
+ * A static class that allows configs to be save locally.
+ * 
+ * @author Rik
+ * 
+ * @see jaws.business.config.ConfigFactory
+ * @see jaws.business.config.ConfigRequestProcessor
+ * @see jaws.business.config.DefaultConfigs
+ */
+final public class ConfigLoader {
 
 	private static String configFolder;
 	private static final String fileExtension = ".properties";
@@ -22,11 +31,19 @@ public class ConfigLoader {
 	private static boolean initialized = false;
 
 	private ConfigLoader() {}
-
+	
+	/**
+	 * @return {@code true} if the ConfigLoader has already been initialized.
+	 */
 	public static boolean initialized() {
 		return initialized;
 	}
-
+	
+	/**
+	 * Initializes the ConfigLoader to save its configs in a certain folder.
+	 * 
+	 * @param configFolder the folder to save the configs in.
+	 */
 	public static void init(String configFolder) {
 
 		if(initialized) {
@@ -37,7 +54,10 @@ public class ConfigLoader {
 
 		initialized = true;
 	}
-
+	
+	/**
+	 * deinitializes the ConfigLoader.
+	 */
 	public static void deinit() {
 
 		if(!initialized) {
@@ -48,12 +68,26 @@ public class ConfigLoader {
 
 		initialized = false;
 	}
-
+	
+	/**
+	 * Checks if a given config exists.
+	 * 
+	 * @param configName the name of the config.
+	 * 
+	 * @return {@code true} if the config exists.
+	 */
 	public static boolean configExists(String configName) {
 
 		return Files.exists(new File(getConfigFileName(configName)).toPath());
 	}
 
+	/**
+	 * Loads a given config from the filesystem.
+	 * 
+	 * @param configName the name of the config.
+	 * 
+	 * @return the loaded config.
+	 */
 	public static Properties loadConfig(String configName) {
 
 		return tryCatch(() -> {
@@ -72,7 +106,13 @@ public class ConfigLoader {
 			return properties;
 		}).get();
 	}
-
+	
+	/**
+	 * Saves a given config to the filesystem.
+	 * 
+	 * @param configName the name of the config.
+	 * @param properties the config to save.
+	 */
 	public static void saveConfig(String configName, Properties properties) {
 
 		File file = new File(getConfigFileName(configName));

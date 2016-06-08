@@ -15,15 +15,33 @@ import jaws.business.loggers.LogAccessor;
 import jaws.context.Context;
 import jaws.data.net.Connection;
 
+/**
+ * A class that can handle a request from the JAWS client.
+ * 
+ * @author Rik
+ */
 public class ConfigRequestProcessor {
 
 	private LogAccessor logCache;
-
+	
+	/**
+	 * Creates a ConfigRequestProcessor with a log accessor to get logs from.
+	 * 
+	 * @param logCache
+	 */
 	public ConfigRequestProcessor(LogAccessor logCache) {
 
 		this.logCache = logCache;
 	}
-
+	
+	/**
+	 * Handles a connection. <br>
+	 * <br>
+	 * Will update the configs, send back the current configs, send back logs since a certain point in time and turn the server on or off if requested. <br>
+	 * The result gets written back into the client object.
+	 * 
+	 * @param client the connection to handle.
+	 */
 	public void handle(Connection client) {
 
 		JSONObject response = new JSONObject();
