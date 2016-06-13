@@ -5,6 +5,12 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * A pool of worker threads that run a queue of tasks.
+ * 
+ * @author geroy
+ *
+ */
 public class ThreadPool {
 
 	private BlockingQueue<Runnable> taskQueue;
@@ -25,6 +31,12 @@ public class ThreadPool {
 		}
 	}
 	
+	/**
+	 * Queue a task for the worker threads to run.
+	 * 
+	 * @param task the runnable task.
+	 * @throws InterruptedException if the queue is stopped.
+	 */
 	public synchronized void execute(Runnable task) throws InterruptedException {
 		
 		if(isStopped)
@@ -33,6 +45,9 @@ public class ThreadPool {
 		taskQueue.put(task);
 	}
 	
+	/**
+	 * Stops the pool and all worker threads;
+	 */
 	public synchronized void stop() {
 		
 		isStopped = true;

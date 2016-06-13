@@ -26,10 +26,21 @@ import jaws.module.http.RequestMethod;
 import jaws.module.net.ContainsHandler;
 import jaws.module.net.Handle;
 
+/**
+ * A static class that loads all modules from a specified directory.
+ * 
+ * @author Roy
+ *
+ */
 public class ModuleLoader {
 
 	private static Map<Entry<List<String>, List<RequestMethod>>, Handler> handlers;
 
+	/**
+	 * Initialize the ModuleLoader and load all available modules.
+	 * 
+	 * @param moduleFolderPath the path to the folder where the modules lie.
+	 */
 	public static void init(String moduleFolderPath) {
 		Map<Integer, Entry<Entry<List<String>, List<RequestMethod>>, Optional<Handler>>> unsortedHandlers = new HashMap<>();
 
@@ -135,6 +146,11 @@ public class ModuleLoader {
 		               .findFirst();
 	}
 
+	/**
+	 * Generates a method that when invoked, returns the matching Handler for a request.
+	 * 
+	 * @return the generated method.
+	 */
 	public static BiFunction<String, RequestMethod, Optional<Handler>> getHandlerGetter() {
 
 		return ModuleLoader::getHandler;

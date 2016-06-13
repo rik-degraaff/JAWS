@@ -1,5 +1,11 @@
 package jaws.business.thread;
 
+/**
+ * A special thread that takes a Runnable-Stoppable and stops it when interrupted.
+ * 
+ * @author Roy
+ *
+ */
 public class StoppableThread extends Thread {
 
 	private Stoppable stoppable;

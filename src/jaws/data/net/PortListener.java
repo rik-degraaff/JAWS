@@ -11,6 +11,12 @@ import jaws.context.Context;
 
 import static trycrash.Try.tryCatch;
 
+/**
+ * A class that constantly listens to a specified port and performs an action as soon as a client establishes a connection.
+ * 
+ * @author Roy
+ *
+ */
 public class PortListener implements Runnable, Stoppable {
 
 	private ServerSocket server;

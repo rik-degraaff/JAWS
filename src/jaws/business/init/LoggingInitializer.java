@@ -10,6 +10,12 @@ import jaws.business.config.ConfigFactory;
 import jaws.context.Context;
 import jaws.util.Box;
 
+/**
+ * A static initializer class to prepare the logging system.
+ * 
+ * @author Roy
+ *
+ */
 public final class LoggingInitializer {
 
 	private static final String configName = "logs";

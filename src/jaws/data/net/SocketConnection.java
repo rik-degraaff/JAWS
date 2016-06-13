@@ -7,6 +7,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
+/**
+ * A class that represents a connection using the {@link java.net.Socket} class.
+ * 
+ * @author Roy
+ *
+ */
 public class SocketConnection implements Connection {
 
 	private Socket socket;

@@ -8,6 +8,12 @@ import java.util.stream.Collectors;
 
 import jal.business.log.Log;
 
+/**
+ * A class which caches all logs and offers an interface to access those.
+ * 
+ * @author Roy
+ *
+ */
 public class LogCache implements Consumer<Log>, LogAccessor {
 
 	private List<Log> cachedLogs;
@@ -19,6 +25,9 @@ public class LogCache implements Consumer<Log>, LogAccessor {
 		this.cacheSize = cacheSize;
 	}
 
+	/**
+	 * This method is used to add a log to the cache.
+	 */
 	@Override
 	public void accept(Log log) {
 

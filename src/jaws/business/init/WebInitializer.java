@@ -12,6 +12,12 @@ import jaws.context.Context;
 import jaws.data.module.ModuleLoader;
 import jaws.data.net.PortListener;
 
+/**
+ * A static initializer class to prepare the HTTP port listening and request processing.
+ * 
+ * @author Roy
+ *
+ */
 public final class WebInitializer {
 
 	private static final String configName = "web";
