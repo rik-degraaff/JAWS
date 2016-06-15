@@ -28,17 +28,21 @@ import jaws.module.net.Handle;
 
 /**
  * A static class that loads all modules from a specified directory.
- * 
+ *
  * @author Roy
  *
  */
 public class ModuleLoader {
 
-	private static Map<Entry<List<String>, List<RequestMethod>>, Handler> handlers;
+	/*
+	 * Warning! This is a List of Entries, not a Map,
+	 * because the List's order is of great importance.
+	 */
+	private static List<Entry<Entry<List<String>, List<RequestMethod>>, Handler>> handlers;
 
 	/**
 	 * Initialize the ModuleLoader and load all available modules.
-	 * 
+	 *
 	 * @param moduleFolderPath the path to the folder where the modules lie.
 	 */
 	public static void init(String moduleFolderPath) {
@@ -130,7 +134,7 @@ public class ModuleLoader {
 		                           .filter(e -> e.getValue().getValue().isPresent())
 		                           .sorted((e1, e2) -> e2.getKey().compareTo(e1.getKey()))
 		                           .map(e -> new SimpleEntry<>(e.getValue().getKey(), e.getValue().getValue().get()))
-		                           .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+		                           .collect(Collectors.toList());
 
 		Context.logger.debug(handlers.toString());
 		Context.logger.info("Finished loading modules", "modules");
@@ -138,7 +142,7 @@ public class ModuleLoader {
 
 	private static Optional<Handler> getHandler(String extension, RequestMethod requestMethod) {
 
-		return handlers.entrySet().stream()
+		return handlers.stream()
 		               .filter(e -> e.getKey().getKey().stream().anyMatch(f -> extension.matches(f)))
 		               .filter(e -> e.getKey().getValue().contains(requestMethod))
 		               .limit(1)
@@ -148,7 +152,7 @@ public class ModuleLoader {
 
 	/**
 	 * Generates a method that when invoked, returns the matching Handler for a request.
-	 * 
+	 *
 	 * @return the generated method.
 	 */
 	public static BiFunction<String, RequestMethod, Optional<Handler>> getHandlerGetter() {
