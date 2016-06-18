@@ -32,7 +32,9 @@ import jaws.module.net.Handle;
  * @author Roy
  *
  */
-public class ModuleLoader {
+final public class ModuleLoader {
+	
+	private ModuleLoader() {}
 
 	/*
 	 * Warning! This is a List of Entries, not a Map,
