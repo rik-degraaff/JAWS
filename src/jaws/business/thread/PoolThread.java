@@ -10,7 +10,7 @@ import java.util.concurrent.BlockingQueue;
  * @author Roy
  *
  */
-public class PoolThread extends Thread {
+class PoolThread extends Thread {
 
 	private BlockingQueue<Runnable> taskQueue;
 	private boolean isStopped;
