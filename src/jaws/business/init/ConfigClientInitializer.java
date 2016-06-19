@@ -7,8 +7,8 @@ import jal.business.log.JALogger;
 import jaws.business.config.ConfigFactory;
 import jaws.business.config.ConfigRequestProcessor;
 import jaws.business.loggers.LogCache;
-import jaws.business.thread.StoppableThread;
 import jaws.data.net.PortListener;
+import jaws.util.thread.StoppableThread;
 
 /**
  * A static initializer class to prepare the server for the communication with the configuration client.

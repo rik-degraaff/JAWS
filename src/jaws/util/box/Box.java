@@ -1,4 +1,4 @@
-package jaws.util;
+package jaws.util.box;
 
 import java.util.Optional;
 

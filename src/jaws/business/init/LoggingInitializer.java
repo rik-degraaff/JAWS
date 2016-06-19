@@ -8,7 +8,7 @@ import jal.business.loggers.FileLogger;
 import jal.business.loggers.StreamLogger;
 import jaws.business.config.ConfigFactory;
 import jaws.context.Context;
-import jaws.util.Box;
+import jaws.util.box.Box;
 
 /**
  * A static initializer class to prepare the logging system.

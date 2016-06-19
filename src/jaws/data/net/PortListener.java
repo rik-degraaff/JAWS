@@ -6,8 +6,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.function.Consumer;
 
-import jaws.business.thread.Stoppable;
 import jaws.context.Context;
+import jaws.util.thread.Stoppable;
 
 import static trycrash.Try.tryCatch;
 

@@ -6,11 +6,11 @@ import java.util.Properties;
 
 import jaws.business.config.ConfigFactory;
 import jaws.business.net.RequestProcessor;
-import jaws.business.thread.StoppableThread;
-import jaws.business.thread.ThreadPool;
 import jaws.context.Context;
 import jaws.data.module.ModuleLoader;
 import jaws.data.net.PortListener;
+import jaws.util.thread.StoppableThread;
+import jaws.util.thread.ThreadPool;
 
 /**
  * A static initializer class to prepare the HTTP port listening and request processing.

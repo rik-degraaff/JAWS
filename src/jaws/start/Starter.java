@@ -9,7 +9,7 @@ import jaws.business.init.LoggingInitializer;
 import jaws.business.init.WebInitializer;
 import jaws.context.Context;
 import jaws.data.config.ConfigLoader;
-import jaws.util.Box;
+import jaws.util.box.Box;
 
 public class Starter {
 

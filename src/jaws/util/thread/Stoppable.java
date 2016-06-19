@@ -1,4 +1,4 @@
-package jaws.business.thread;
+package jaws.util.thread;
 
 public interface Stoppable {
 

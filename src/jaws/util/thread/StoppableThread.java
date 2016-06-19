@@ -1,4 +1,4 @@
-package jaws.business.thread;
+package jaws.util.thread;
 
 /**
  * A special thread that takes a Runnable-Stoppable and stops it when interrupted.
