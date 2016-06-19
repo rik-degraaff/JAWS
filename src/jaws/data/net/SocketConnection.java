@@ -13,7 +13,7 @@ import java.net.Socket;
  * @author Roy
  *
  */
-public class SocketConnection implements Connection {
+class SocketConnection implements Connection {
 
 	private Socket socket;
 
