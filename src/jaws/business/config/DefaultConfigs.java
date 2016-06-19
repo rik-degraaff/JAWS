@@ -34,6 +34,7 @@ final class DefaultConfigs {
 		web.setProperty("module_folder", "../modules");
 		web.setProperty("webroot", "../www");
 		web.setProperty("port", "80");
+		web.setProperty("threads", "10");
 		defaultProperties.put("web", web);
 
 		// configClient

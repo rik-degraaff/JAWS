@@ -42,7 +42,7 @@ public final class WebInitializer {
 		Properties properties = ConfigFactory.getConfig(configName);
 
 		ModuleLoader.init(properties.getProperty("module_folder"));
-		threadPool = new ThreadPool(5);
+		threadPool = new ThreadPool(Integer.parseInt(properties.getProperty("threads")));
 
 		portListenerThread = new StoppableThread(
 			new PortListener(Integer.parseInt(properties.getProperty("port")), client -> {
