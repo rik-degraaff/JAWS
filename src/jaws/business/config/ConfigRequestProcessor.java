@@ -52,13 +52,14 @@ public class ConfigRequestProcessor {
 			{
 				String line;
 				BufferedReader reader = client.read();
-				while((line = reader.readLine()) != null) {
+				System.out.println("start reading from socket");
+				while(!(line = reader.readLine()).equals("EndOfMessage")) {
 					stringBuilder.append(line);
 				}
+				System.out.println("finished reading from socket");
 			}
 
 			JSONObject request = new JSONObject(stringBuilder.toString());
-			Context.logger.debug(request.toString());
 
 			if(request.has("updateLogs")) {
 				JSONObject logUpdate = new JSONObject();
@@ -70,7 +71,7 @@ public class ConfigRequestProcessor {
 				Date newLastUpdate;
 
 				if(updateLogs.has("lastUpdate")) {
-					lastUpdate = new Date(updateLogs.getInt("lastUpdate"));
+					lastUpdate = new Date(updateLogs.getLong("lastUpdate"));
 					newLogs = logCache.getLogsSince(lastUpdate);
 					newLastUpdate = newLogs.stream()
                                            .map(Log::getTimeStamp)
@@ -83,7 +84,7 @@ public class ConfigRequestProcessor {
                                            .max(Date::compareTo).orElse(currentDate);
 				}
 
-				logUpdate.put("lastUpdate", newLastUpdate);
+				logUpdate.put("lastUpdate", newLastUpdate.getTime());
 				logUpdate.put("logs", newLogs.stream()
 				                             .map(Log::toJSON)
 				                             .collect(JSONArray::new, JSONArray::put, (array1, array2) -> array2.forEach(array1::put)));
@@ -124,9 +125,9 @@ public class ConfigRequestProcessor {
 				WebInitializer.reinit();
 			}
 
-			client.write(response.toString().getBytes());
+			client.write((response.toString() + "\nEndOfMessage\n").getBytes());
 		} catch (IOException e) {
-
+			e.printStackTrace();
 		}
 	}
 }
