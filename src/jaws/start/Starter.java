@@ -2,8 +2,13 @@ package jaws.start;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import jal.business.log.JALogger;
+import jal.business.log.LogLevel;
 import jaws.business.init.ConfigClientInitializer;
 import jaws.business.init.LoggingInitializer;
 import jaws.business.init.WebInitializer;
@@ -14,6 +19,9 @@ import jaws.util.box.Box;
 public class Starter {
 
 	private static final String configFolder = "../config/";
+	
+	private static LogLevel logLevel = LogLevel.INFO;
+	private static long timeout = 0;
 
 	public static void main(String[] args) {
 
@@ -36,9 +44,41 @@ public class Starter {
 				init();
 			});
 			thread.start();
-		});
-
+		});		
+		
+		processArgs(args);
+		scheduleTimeout(timeout);
 		init();
+	}
+	
+	private static void scheduleTimeout(long timeout) {
+		
+		if (timeout > 0) {
+			new Timer().schedule(new TimerTask() {
+				
+				@Override
+				public void run() {
+					Context.logger.info("Scheduled shutdown");
+					deinit();
+					System.exit(0);
+				}
+			}, timeout*1000);
+		}
+	}
+	
+	private static void processArgs(String[] args) {
+		
+		String last = "";
+		for (int i = 0; i < args.length; i++) {
+			if (Arrays.asList("--verbose", "-v").contains(args[i])) {
+				logLevel = LogLevel.DEBUG;
+			} else if (Arrays.asList("--quite", "-q").contains(args[i])) {
+				logLevel = LogLevel.WARNING;
+			} else if (Arrays.asList("--timeout", "-t").contains(last)) {
+				timeout = Long.parseLong(args[i]);
+			}
+			last = args[i];
+		}
 	}
 
 	private static void init() {
