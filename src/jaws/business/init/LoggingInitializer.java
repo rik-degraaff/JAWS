@@ -29,7 +29,7 @@ public final class LoggingInitializer {
 		return initialized;
 	}
 
-	public static void init(Box<JALogger> loggerBox) {
+	public static void init(Box<JALogger> loggerBox, LogLevel consoleLogLevel) {
 
 		if(initialized) {
 			throw new IllegalStateException("LoggingInitializer already initialized");
@@ -39,13 +39,18 @@ public final class LoggingInitializer {
 
 		LogLevel logLevel;
 		try {
-			logLevel = LogLevel.valueOf(properties.getProperty("loglevel"));
+			logLevel = LogLevel.withLevel(Integer.parseInt(properties.getProperty("loglevel")));
 		} catch(IllegalArgumentException e) {
 			logLevel = LogLevel.INFO;
 		}
 
 		JALogger logger = new JALogger(logLevel);
-		logger.addListener(new StreamLogger(System.out));
+		StreamLogger consoleLogger = new StreamLogger(System.out);
+		logger.addListener(log -> { 
+			if (log.getLogLevel().getLevel() >= consoleLogLevel.getLevel()) {
+				consoleLogger.accept(log);
+			}
+		});
 		logger.addListener(new FileLogger(properties.getProperty("log_folder") + "/jaws.log"));
 		Context.logger = logger;
 		loggerBox.box(logger);
