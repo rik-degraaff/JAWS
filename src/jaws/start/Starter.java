@@ -85,7 +85,7 @@ public class Starter {
 
 		if (!ConfigLoader.initialized()) ConfigLoader.init(configFolder);
 		Box<JALogger> loggerBox = new Box<>();
-		if (!LoggingInitializer.initialized()) LoggingInitializer.init(loggerBox);
+		if (!LoggingInitializer.initialized()) LoggingInitializer.init(loggerBox, logLevel);
 		if (!WebInitializer.initialized()) WebInitializer.init();
 		if (!ConfigClientInitializer.initialized()) ConfigClientInitializer.init(loggerBox.unbox());
 	}
