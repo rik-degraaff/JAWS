@@ -13,6 +13,7 @@ import jal.business.log.Log;
 import jaws.business.init.WebInitializer;
 import jaws.business.loggers.LogAccessor;
 import jaws.data.net.Connection;
+import jaws.start.Starter;
 
 /**
  * A class that can handle a request from the JAWS client.
@@ -57,6 +58,11 @@ public class ConfigRequestProcessor {
 			}
 
 			JSONObject request = new JSONObject(stringBuilder.toString());
+			
+			if(request.has("restart") && request.getBoolean("restart")) {
+				Starter.restart();
+				return;
+			}
 
 			if(request.has("updateLogs")) {
 				JSONObject logUpdate = new JSONObject();

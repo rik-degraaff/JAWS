@@ -96,4 +96,10 @@ public class Starter {
 		if (LoggingInitializer.initialized()) LoggingInitializer.deinit();
 		if (ConfigLoader.initialized()) ConfigLoader.deinit();
 	}
+	
+	public static void restart() {
+		
+		deinit();
+		init();
+	}
 }
