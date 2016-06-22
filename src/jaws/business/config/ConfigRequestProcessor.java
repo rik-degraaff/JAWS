@@ -51,11 +51,9 @@ public class ConfigRequestProcessor {
 			{
 				String line;
 				BufferedReader reader = client.read();
-				System.out.println("start reading from socket");
 				while(!(line = reader.readLine()).equals("EndOfMessage")) {
 					stringBuilder.append(line);
 				}
-				System.out.println("finished reading from socket");
 			}
 
 			JSONObject request = new JSONObject(stringBuilder.toString());
@@ -92,17 +90,29 @@ public class ConfigRequestProcessor {
 			if(request.has("updateConfigs")) {
 				JSONObject configUpdate = new JSONObject();
 				response.put("configUpdate", configUpdate);
+				
+				Properties logConfig = ConfigFactory.getConfig("logs");
+				JSONObject logConfigJSON = new JSONObject();
+				configUpdate.put("logs", logConfigJSON);
+				logConfigJSON.put("log_folder", logConfig.get("log_folder"));
+				
+				Properties webConfig = ConfigFactory.getConfig("web");
+				JSONObject webConfigJSON = new JSONObject();
+				configUpdate.put("web", webConfigJSON);
+				webConfigJSON.put("port", webConfig.get("port"));
+				webConfigJSON.put("threads", webConfig.get("threads"));
+				webConfigJSON.put("webroot", webConfig.get("webroot"));
 
-				JSONArray updateConfigs = request.getJSONArray("updateConfigs");
-
-				for(Object configNameObject : updateConfigs) {
-
-					String configName = (String) configNameObject;
-
-					Properties config = ConfigFactory.getConfig(configName);
-
-					configUpdate.put(configName, ConfigFactory.configToJSON(config));
-				}
+//				JSONArray updateConfigs = request.getJSONArray("updateConfigs");
+//
+//				for(Object configNameObject : updateConfigs) {
+//
+//					String configName = (String) configNameObject;
+//
+//					Properties config = ConfigFactory.getConfig(configName);
+//
+//					configUpdate.put(configName, ConfigFactory.configToJSON(config));
+//				}
 			}
 
 			if(request.has("saveConfigs")) {
@@ -114,7 +124,7 @@ public class ConfigRequestProcessor {
 					JSONObject newConfigJSON = saveConfigs.getJSONObject(configName);
 
 					for(String newConfigKey : newConfigJSON.keySet()) {
-						String newConfigValue = (String) newConfigJSON.get(newConfigKey);
+						String newConfigValue = newConfigJSON.get(newConfigKey).toString();
 						config.put(newConfigKey, newConfigValue);
 					}
 

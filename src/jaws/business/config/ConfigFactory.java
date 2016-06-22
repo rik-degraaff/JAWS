@@ -64,7 +64,8 @@ final public class ConfigFactory {
 	 */
 	public static Properties mergeProperties(Properties mainProperties, Properties... otherProperties) {
 
-		Properties result = new Properties(mainProperties);
+		Properties result = new Properties();
+		result.putAll(mainProperties);
 
 		for(Properties properties : otherProperties) {
 			result.putAll(properties);
