@@ -39,7 +39,7 @@ public final class LoggingInitializer {
 
 		LogLevel logLevel;
 		try {
-			logLevel = LogLevel.valueOf(properties.getProperty("loglevel").toUpperCase());
+			logLevel = LogLevel.fromString(properties.getProperty("loglevel").toUpperCase());
 		} catch(IllegalArgumentException e) {
 			logLevel = LogLevel.INFO;
 		}
