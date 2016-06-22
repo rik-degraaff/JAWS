@@ -29,32 +29,40 @@ public class RequestProcessor {
 
 		try {
 
-			//HTTPRequest request = DefaultHTTPRequest.parse(client.read());
-			HTTPRequest request = HTTPObjectFactory.parseRequest(client.read());
-			Context.logger.info("An http request has come in:" + System.lineSeparator()
-			                    + request.toString(), "request");
-			HTTPResponse response = HTTPObjectFactory.createResponse().httpVersion("HTTP/1.1").statusCode(200).reason("OK")
-			                                                          .header("Content-Type", "text/html");
-			Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1), request.method()).get();
-
-			response = handler.handle(request, response, new File(webroot));
+			HTTPResponse response = getResponse(client);
 			client.write(response.getOutputStream());
 		} catch (IOException | NoSuchElementException e) {
+			sendInternalServerError(client);
+		}
+	}
 
-			String body = "<h1>500 - Internal Server Error</h1>";
-			HTTPResponse response = HTTPObjectFactory.createResponse().httpVersion("HTTP/1.1").statusCode(500).reason("Internal Server Error")
-			                                                          .header("Content-Type", "text/html")
-			                                                          .header("Content-Length", Integer.toString(body.length()))
-			                                                          .body(body);
+	private HTTPResponse getResponse(Connection client) throws IOException {
+		
+		HTTPRequest request = HTTPObjectFactory.parseRequest(client.read());
+		Context.logger.info("An http request has come in:" + System.lineSeparator()
+		                    + request.toString(), "request");
+		HTTPResponse response = HTTPObjectFactory.createResponse().httpVersion("HTTP/1.1").statusCode(200).reason("OK")
+		                                                          .header("Content-Type", "text/html");
+		Handler handler = handlerGetter.apply(request.url().substring(request.url().lastIndexOf('.') + 1), request.method()).get();
 
-			for(int i=0; i<3; i++) {
+		return handler.handle(request, response, new File(webroot));
+	}
 
-				try {
-					client.write(response.getBytes());
-					break;
-				} catch (IOException e1) {
-					continue;
-				}
+	private void sendInternalServerError(Connection client) {
+		
+		String body = "<h1>500 - Internal Server Error</h1>";
+		HTTPResponse response = HTTPObjectFactory.createResponse().httpVersion("HTTP/1.1").statusCode(500).reason("Internal Server Error")
+		                                                          .header("Content-Type", "text/html")
+		                                                          .header("Content-Length", Integer.toString(body.length()))
+		                                                          .body(body);
+
+		for(int i=0; i<3; i++) {
+
+			try {
+				client.write(response.getBytes());
+				break;
+			} catch (IOException e1) {
+				continue;
 			}
 		}
 	}
