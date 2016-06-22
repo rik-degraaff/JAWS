@@ -108,17 +108,6 @@ public class ConfigRequestProcessor {
 				webConfigJSON.put("port", webConfig.get("port"));
 				webConfigJSON.put("threads", webConfig.get("threads"));
 				webConfigJSON.put("webroot", webConfig.get("webroot"));
-
-//				JSONArray updateConfigs = request.getJSONArray("updateConfigs");
-//
-//				for(Object configNameObject : updateConfigs) {
-//
-//					String configName = (String) configNameObject;
-//
-//					Properties config = ConfigFactory.getConfig(configName);
-//
-//					configUpdate.put(configName, ConfigFactory.configToJSON(config));
-//				}
 			}
 
 			if(request.has("saveConfigs")) {
