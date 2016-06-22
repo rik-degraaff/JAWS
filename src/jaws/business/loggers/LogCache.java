@@ -31,22 +31,28 @@ public class LogCache implements Consumer<Log>, LogAccessor {
 	@Override
 	public void accept(Log log) {
 
-		cachedLogs.add(log);
-		if(cachedLogs.size() > cacheSize) {
-
-			cachedLogs.remove(0);
+		synchronized(cachedLogs) {
+			cachedLogs.add(log);
+			if(cachedLogs.size() > cacheSize) {
+	
+				cachedLogs.remove(0);
+			}
 		}
 	}
 
 	@Override
 	public List<Log> getLogs() {
 
-		return new ArrayList<>(cachedLogs);
+		synchronized(cachedLogs) {
+			return new ArrayList<>(cachedLogs);
+		}
 	}
 
 	@Override
 	public List<Log> getLogsSince(Date timestamp) {
 
-		return cachedLogs.stream().filter(log -> log.getTimeStamp().after(timestamp)).collect(Collectors.toList());
+		synchronized(cachedLogs) {
+			return cachedLogs.stream().filter(log -> log.getTimeStamp().after(timestamp)).collect(Collectors.toList());
+		}
 	}
 }
