@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import jal.business.log.Log;
 import jaws.business.init.WebInitializer;
 import jaws.business.loggers.LogAccessor;
-import jaws.context.Context;
 import jaws.data.net.Connection;
 
 /**
